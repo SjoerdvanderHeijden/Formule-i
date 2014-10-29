@@ -1,6 +1,4 @@
 class Car(object):
-  def miew():
-    # just to test :3
 
 class Parking(object):
 
