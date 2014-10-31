@@ -45,7 +45,7 @@ class Car(object):
         return pos in self.poslist
 
 class RedCar(Car):
-    # het lijkt mij het handigst als parking checkt of RedCar bij de uitgang is.
+    #het lijkt me het handigst als simulatie checkt of RedCar bij de uitgang is.
     pass
 
 class Parking(object):
