@@ -4,11 +4,17 @@ class Car(object):
     """
     Car / lorry object.
     """
+    # To identify different cars during debugging.
+    # This number will be increased each time a new car is added.
+    name = 0
+    
     def __init__(self, posList):
         """
         input: posList = list with tuples with all coordinates of the car.
         """
         self.posList = posList
+        self.name = Car.name
+        Car.name +=1
 
         # Calculates the direction of the car: horizontal or vertical
         if posList[0][0] == posList[1][0]:
@@ -17,6 +23,9 @@ class Car(object):
             self.direction = 'v'
         else:
             raise ValueError("Invalid coordinates!")
+
+    def getName(self):
+        return self.name
 
     def getPos(self):
         return self.posList
@@ -86,8 +95,16 @@ class Parking(object):
 
     def occupiedBy(self, pos):
         return self.parkList[pos[0]][pos[1]]
-    
-    def 
 
 def runSimulation():
-    pass
+    audi = RedCar([(0,0),(1,0)])
+    seat = Car([(1,2),(1,3)])
+    parkeerplaats = Parking(3,4,(2,1),[audi,seat])
+    parkeerplaats.getParking()
+
+
+
+
+
+
+    
