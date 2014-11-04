@@ -59,6 +59,8 @@ class Car(object):
     def isAt(self, pos):
         # @pos: type: tuple
         return pos in self.posList
+        
+        
     
     
 
@@ -116,12 +118,33 @@ class Parking(object):
         @distance: distance the car is moved. Positive if the car is moved right/down and negative if it is moved left/up.
         """
         horizontal = car.isHorizontal()
+        initPos = car.getPosition()
+        length = car.getLength()
         
+        
+        if car.isHorizontal():
+            try:
+                for pos in car.getPostition():
+                   x, y = pos[0], pos[1]
+                  self.parkList[x][y] = None
+                  self.parkList[x+distance][y] = car
+            except IndexError:
+                raise ValueError("New position out of range.")
+                
+        else:
+            try:
+               for pos in car.getPostition():
+                 x, y = pos[0], pos[1]
+                 self.parkList[x][y] = None
+                 self.parkList[x][y+distance] = car
+            except IndexError:
+                raise ValueError("New position out of range.")
+            
+        
+            
         # Changes the coordinates of the car in its own class. 
         car.moveCar(distance)
-        
-        #
-        if car.isHorizontal():
+            
             
         
         
