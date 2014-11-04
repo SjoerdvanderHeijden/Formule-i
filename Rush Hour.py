@@ -16,11 +16,11 @@ class Car(object):
         self.name = Car.name
         Car.name +=1
 
-        # Calculates the direction of the car: horizontal or vertical
+        # Calculates wether the car is an horizontal position.
         if posList[0][0] == posList[1][0]:
-            self.direction = 'h'
+            self.horizontal = True
         elif posList[0][1] == posList[1][1]:
-            self.direction = 'v'
+            self.horizontal = False
         else:
             raise ValueError("Invalid coordinates!")
 
@@ -30,8 +30,9 @@ class Car(object):
     def getPos(self):
         return self.posList
 
-    def getDirection(self):
-        return self.direction
+    def isHorizontal(self):
+        # Returns TRUE if car is in an HORIZONTAL position, FALSE if cas is in a VERTICAL position.
+        return self.horizontal
 
     def getLength(self):
         return len(self.posList)
@@ -39,13 +40,13 @@ class Car(object):
     def moveCar(self, distance):
         coord = self.getPos()
         
-        if self.richting == 'h':
+        if self.isHorizontal():
             for i in xrange(len(coord)):
-                # x-coordinaten worden aangepast
+                # x-coordinates are adjusted
                 coord[i] = (coord[i][0] + distance, coord[i][1])
         else:
             for i in xrange(len(coord)):
-                # x-coordinaten worden aangepast
+                # y-coordinates are adjusted
                 coord[i] = (coord[i][0], coord[i][1] + distance)
                 
         self.posList = coord
@@ -53,9 +54,11 @@ class Car(object):
     def isAt(self, pos):
         # @pos: type: tuple
         return pos in self.posList
+    
+    
 
 class RedCar(Car):
-    # het lijkt me het handigst als simulatie checkt of RedCar bij de uitgang is.
+    # It is probably better if simulation or parking checks wether the red car is at the exit.
     pass
 
 class Parking(object):
@@ -64,16 +67,18 @@ class Parking(object):
 
     input: width, height: integers. exitpos: tuple. carlist: list
     """
-    def __init__(self, width, height, exitpos, carList):
+    def __init__(self, width, height, exitPos, carList):
         self.width = width
         self.height = height
-        self.exitpos = exitpos
+        self.exitPos = exitPos
 
-        # Parking representatie (lijst met lijsten).
-        # (x,y) aanroepen door: parkList[x][y]
+        # Parking representation is a list of lists. The lists correspond to x-coordinates, and their indexes to y-coordinates.
+        # Thus: Element at position (x,y) is found at parkList[x][y]
+        # If a car is positioned at (x,y), parkList[x][y] returns the car as an instance of Car, if no car is positioned at 
+        # (x,y), parkList[x][y] returns None. 
         self.parkList = [ [None for y in xrange(height)] for x in xrange(width)]
 
-        # Auto's worden geplaatst.
+        # Cars are added at their position
         for car in carList:
             posList = car.getPos()
             
@@ -95,6 +100,22 @@ class Parking(object):
 
     def occupiedBy(self, pos):
         return self.parkList[pos[0]][pos[1]]
+<<<<<<< HEAD
+=======
+    
+    def moveCarInParking(self, car, distance):
+        """
+        Moves a car, by changing it position in the parking class and changing it's coordinates in the car class.
+        
+        @car: car to be moved (instance of the car class)
+        @distance: distance the car is moved. Positive if the car is moved right/down and negative if it is moved left/up.
+        """
+        horizontal = car.isHorizontal()
+        
+        
+        
+        
+>>>>>>> 770df6131a5565b7d0ac03b7a01f7cbbbe91270e
 
 def runSimulation():
     audi = RedCar([(0,0),(1,0)])
