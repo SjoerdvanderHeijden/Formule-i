@@ -120,9 +120,13 @@ class Parking(object):
         horizontal = car.isHorizontal()
         initPos = car.getPosition()
         length = car.getLength()
-        
+
         
         if car.isHorizontal():
+            for x-coord in (car.getPosition()[-1][0], car.getPosition()[-1][0]+distance):
+                if self.parkList[x-coord][initPos[1]]!= None:
+                    raise ValueError("Other car in the way")
+            
             try:
                 for pos in car.getPostition():
                    x, y = pos[0], pos[1]
