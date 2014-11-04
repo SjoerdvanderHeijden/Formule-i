@@ -38,6 +38,11 @@ class Car(object):
         return len(self.posList)
 
     def moveCar(self, distance):
+        """
+        Changes the coordinates of the car by changing self.posList
+            
+        @distance: Number of tiles the car is moved. Positive if the car is moved right/down, negative if moved left/up.
+        """
         coord = self.getPos()
         
         if self.isHorizontal():
@@ -112,6 +117,12 @@ class Parking(object):
         """
         horizontal = car.isHorizontal()
         
+        # Changes the coordinates of the car in its own class. 
+        car.moveCar(distance)
+        
+        #
+        if car.isHorizontal():
+            
         
         
         
