@@ -156,12 +156,12 @@ class Parking(object):
 >>>>>>> 770df6131a5565b7d0ac03b7a01f7cbbbe91270e
 
 def runSimulation():
-    audi = RedCar([(0,0),(1,0)])
+    audi = RedCar([(6,0),(6,1)])
     seat = Car([(1,2),(1,3)])
-    parkeerplaats = Parking(3,4,(2,1),[audi,seat])
-    parkeerplaats.getParking()
+    parking = Parking(3,4,(6,6),[audi,seat])
 
-
+    def verplaats(parking):
+        pass # if verplaatsbaar: verplaats
 
 
 
