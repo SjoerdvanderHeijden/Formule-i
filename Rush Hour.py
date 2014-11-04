@@ -10,19 +10,20 @@ class Car(object):
         """
         self.posList = posList
 
-        # Calculates the direction of the car: horizontal or vertical
+        # Calculates wether the car is an horizontal position.
         if posList[0][0] == posList[1][0]:
-            self.direction = 'h'
+            self.horizontal = True
         elif posList[0][1] == posList[1][1]:
-            self.direction = 'v'
+            self.horizontal = False
         else:
             raise ValueError("Invalid coordinates!")
 
     def getPos(self):
         return self.posList
 
-    def getDirection(self):
-        return self.direction
+    def isHorizontal(self):
+        # Returns TRUE if car is in an HORIZONTAL position, FALSE if cas is in a VERTICAL position.
+        return self.horizontal
 
     def getLength(self):
         return len(self.posList)
@@ -30,13 +31,13 @@ class Car(object):
     def moveCar(self, distance):
         coord = self.getPos()
         
-        if self.richting == 'h':
+        if self.isHorizontal():
             for i in xrange(len(coord)):
                 # x-coordinates are adjusted
                 coord[i] = (coord[i][0] + distance, coord[i][1])
         else:
             for i in xrange(len(coord)):
-                # x-coordinates are adjusted
+                # y-coordinates are adjusted
                 coord[i] = (coord[i][0], coord[i][1] + distance)
                 
         self.posList = coord
@@ -62,8 +63,10 @@ class Parking(object):
         self.height = height
         self.exitPos = exitPos
 
-        # Parking representation is a list of lists. Empty spots are "None".(list of lists) 
-        # (x,y) aanroepen door: parkList[x][y]
+        # Parking representation is a list of lists. The lists correspond to x-coordinates, and their indexes to y-coordinates.
+        # Thus: Element at position (x,y) is found at parkList[x][y]
+        # If a car is positioned at (x,y), parkList[x][y] returns the car as an instance of Car, if no car is positioned at 
+        # (x,y), parkList[x][y] returns None. 
         self.parkList = [ [None for y in xrange(height)] for x in xrange(width)]
 
         # Cars are added at their position
@@ -96,6 +99,9 @@ class Parking(object):
         @car: car to be moved (instance of the car class)
         @distance: distance the car is moved. Positive if the car is moved right/down and negative if it is moved left/up.
         """
+        horizontal = car.isHorizontal()
+        
+        
         
         
 
