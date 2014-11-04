@@ -3,17 +3,18 @@
 class Car(object):
     """
     Car / lorry object.
-    
-    input: posList = list with tuples with coordinates.
     """
     def __init__(self, posList):
+        """
+        input: posList = list with tuples with all coordinates of the car.
+        """
         self.posList = posList
 
-        # uirekenen van richting
+        # Calculates the direction of the car: horizontal or vertical
         if posList[0][0] == posList[1][0]:
-            self.richting = 'h'
+            self.direction = 'h'
         elif posList[0][1] == posList[1][1]:
-            self.richting = 'v'
+            self.direction = 'v'
         else:
             raise ValueError("Invalid coordinates!")
 
@@ -21,31 +22,31 @@ class Car(object):
         return self.posList
 
     def getDirection(self):
-        return self.richting
+        return self.direction
 
     def getLength(self):
         return len(self.posList)
 
     def moveCar(self, distance):
-        crd = self.posList
+        coord = self.getPos()
         
         if self.richting == 'h':
-            for i in xrange(len(crd)):
+            for i in xrange(len(coord)):
                 # x-coordinaten worden aangepast
-                crd[i] = (crd[i][0] + distance, crd[i][1])
+                coord[i] = (coord[i][0] + distance, coord[i][1])
         else:
-            for i in xrange(len(crd)):
+            for i in xrange(len(coord)):
                 # x-coordinaten worden aangepast
-                crd[i] = (crd[i][0], crd[i][1] + distance)
+                coord[i] = (coord[i][0], coord[i][1] + distance)
                 
-        self.posList = crd
+        self.posList = coord
 
     def isAt(self, pos):
         # @pos: type: tuple
         return pos in self.posList
 
 class RedCar(Car):
-    #het lijkt me het handigst als simulatie checkt of RedCar bij de uitgang is.
+    # het lijkt me het handigst als simulatie checkt of RedCar bij de uitgang is.
     pass
 
 class Parking(object):
@@ -85,6 +86,8 @@ class Parking(object):
 
     def occupiedBy(self, pos):
         return self.parkList[pos[0]][pos[1]]
+    
+    def 
 
 def runSimulation():
     pass
