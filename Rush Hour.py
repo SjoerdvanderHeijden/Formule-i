@@ -1,4 +1,9 @@
 # Rush Hour.py
+# Contributors: Patrick Schilder, Sjoerd van der Heijden and Alix Dodu
+
+
+import math
+
 
 class Car(object):
     """
@@ -118,26 +123,36 @@ class Parking(object):
         @distance: distance the car is moved. Positive if the car is moved right/down and negative if it is moved left/up.
         """
         horizontal = car.isHorizontal()
-        initPos = car.getPosition()
+        startPos = car.getPosition()
         length = car.getLength()
-
+        
+        # nextTileIndex is 1 if the car is moved right/down, and -1 if the car is moved left/up. It is also 1 if the car is not
+        # moved (distance = 0). 
+        # It is used to check wether the tiles the car wants to move over are free, or if another car blocks the way.
+        nextTileIndex = int(math.copysign(1,distance))        
         
         if car.isHorizontal():
-            for x-coord in (car.getPosition()[-1][0], car.getPosition()[-1][0]+distance):
-                if self.parkList[x-coord][initPos[1]]!= None:
-                    raise ValueError("Other car in the way")
+            for x-coord in (startPos[-nextTileIndex][0] + nextTileIndex, startPos[-nextTileIndex][0] + nextTileIndex + distance):
+               # Alix : Here, hier was ik laatst bezig. -nextTileIndex klopt niet, het moet 0 zijn als de auto naar links gaat.
+               
+                if self.parkList[x-coord][startPos[0][1]] != None:
+                    raise ValueError("Cannot move car, there is another car in the way.")
+
             
             try:
-                for pos in car.getPostition():
+                for pos in startPos:
                    x, y = pos[0], pos[1]
                   self.parkList[x][y] = None
                   self.parkList[x+distance][y] = car
             except IndexError:
-                raise ValueError("New position out of range.")
+                raise ValueError("Cannot move car, there is another car in the way.")
                 
         else:
+            for y-coord in (startPos[0][-1], startPos[-1][0]+distance):
+                if self.parkList[x-coord][startPos[1]]!= None:
+                    raise ValueError("Cannot move car, there is another car in the way.")          
             try:
-               for pos in car.getPostition():
+               for pos in startPos:
                  x, y = pos[0], pos[1]
                  self.parkList[x][y] = None
                  self.parkList[x][y+distance] = car
