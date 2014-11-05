@@ -135,9 +135,9 @@ class Parking(object):
         
         if car.isHorizontal():
             for x-coord in (startPos[-nextTileIndex][0] + nextTileIndex, startPos[-nextTileIndex][0] + nextTileIndex + distance):
-               # Alix : Here, hier was ik laatst bezig. -nextTileIndex klopt niet, het moet 0 zijn als de auto naar links gaat.
-               # Patrick: Alix, als je je regels niet meer dan ~ 80 breed doet
-               # zou dat chill zijn
+                # Alix : Here, hier was ik laatst bezig. -nextTileIndex klopt niet, het moet 0 zijn als de auto naar links gaat.
+                # Patrick: Alix, als je je regels niet meer dan ~ 80 breed doet
+                # zou dat chill zijn.
                
                 if self.parkList[x-coord][startPos[0][1]] != None:
                     raise ValueError("Cannot move car, there is another car in the way.")
@@ -145,9 +145,9 @@ class Parking(object):
             
             try:
                 for pos in startPos:
-                   x, y = pos[0], pos[1]
-                  self.parkList[x][y] = None
-                  self.parkList[x+distance][y] = car
+                    x, y = pos[0], pos[1]
+                    self.parkList[x][y] = None
+                    self.parkList[x+distance][y] = car
             except IndexError:
                 raise ValueError("Cannot move car, there is another car in the way.")
                 
@@ -156,10 +156,10 @@ class Parking(object):
                 if self.parkList[x-coord][startPos[1]]!= None:
                     raise ValueError("Cannot move car, there is another car in the way.")          
             try:
-               for pos in startPos:
-                 x, y = pos[0], pos[1]
-                 self.parkList[x][y] = None
-                 self.parkList[x][y+distance] = car
+                for pos in startPos:
+                    x, y = pos[0], pos[1]
+                    self.parkList[x][y] = None
+                    self.parkList[x][y+distance] = car
             except IndexError:
                 raise ValueError("New position out of range.")
             
@@ -179,18 +179,18 @@ def runSimulation():
     solve(parking1)
 
 
-    ### !!! IK BEDENK ME NET DAT WE GEEN COORDINATEN IN 'CAR' MOETEN OPSLAAN.
-    # ER KOMEN NAMELIJK ALLEMAAL PARKEERPLAATSEN DIE NAAR DEZELFDE AUTO WIJZEN..
+### !!! IK BEDENK ME NET DAT WE GEEN COORDINATEN IN 'CAR' MOETEN OPSLAAN.
+# ER KOMEN NAMELIJK ALLEMAAL PARKEERPLAATSEN DIE NAAR DEZELFDE AUTO('S) WIJZEN..
 
     def solve(parking):
-        # Patrick: er moet nog iets komen tegen loops.
+        # Patrick: er moet nog iets komen tegen loops + er moet bepaald worden
+        # hoe er wordt gecheckt wanneer een puzzel is opgelost.
         if not solved:
-            toSolve = []
             for car in cars:
-                toSolve.append(moveCarInParking(car, 1))
-                toSolve.append(moveCarInParking(car, -1))
-            for j in toSolve:
-                solve(j)
+                # Dit gaat alleen werken als moveCarInParking een nieuw
+                #  Parking object returned.
+                solve(parking.moveCarInParking(car, 1))
+                solve(parking.moveCarInParking(car, -1))
                 
         else:
             save solution
