@@ -108,13 +108,15 @@ class Parking(object):
                 
 
     def getParking(self):
+        # This print can be changed into a return if necessary.
         print self.parkList
+
+    def getExit(self):
+        return self.exitPos
 
     def occupiedBy(self, pos):
         return self.parkList[pos[0]][pos[1]]
-<<<<<<< HEAD
-=======
-    
+
     def moveCarInParking(self, car, distance):
         """
         Moves a car, by changing it position in the parking class and changing it's coordinates in the car class.
@@ -134,6 +136,8 @@ class Parking(object):
         if car.isHorizontal():
             for x-coord in (startPos[-nextTileIndex][0] + nextTileIndex, startPos[-nextTileIndex][0] + nextTileIndex + distance):
                # Alix : Here, hier was ik laatst bezig. -nextTileIndex klopt niet, het moet 0 zijn als de auto naar links gaat.
+               # Patrick: Alix, als je je regels niet meer dan ~ 80 breed doet
+               # zou dat chill zijn
                
                 if self.parkList[x-coord][startPos[0][1]] != None:
                     raise ValueError("Cannot move car, there is another car in the way.")
@@ -164,21 +168,31 @@ class Parking(object):
         # Changes the coordinates of the car in its own class. 
         car.moveCar(distance)
             
-            
-        
-        
-        
->>>>>>> 770df6131a5565b7d0ac03b7a01f7cbbbe91270e
 
 def runSimulation():
     audi = RedCar([(6,0),(6,1)])
     seat = Car([(1,2),(1,3)])
-    parking = Parking(3,4,(6,6),[audi,seat])
+    exitPos1 = (6,6)
+    parking1 = Parking(3,4,exitPos1,[audi,seat])
 
-    def verplaats(parking):
-        pass # if verplaatsbaar: verplaats
+    solutions = []
+    solve(parking1)
 
 
+    ### !!! IK BEDENK ME NET DAT WE GEEN COORDINATEN IN 'CAR' MOETEN OPSLAAN.
+    # ER KOMEN NAMELIJK ALLEMAAL PARKEERPLAATSEN DIE NAAR DEZELFDE AUTO WIJZEN..
 
+    def solve(parking):
+        # Patrick: er moet nog iets komen tegen loops.
+        if not solved:
+            toSolve = []
+            for car in cars:
+                toSolve.append(moveCarInParking(car, 1))
+                toSolve.append(moveCarInParking(car, -1))
+            for j in toSolve:
+                solve(j)
+                
+        else:
+            save solution
 
     
