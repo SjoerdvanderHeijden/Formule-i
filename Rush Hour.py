@@ -46,6 +46,8 @@ class Car(object):
         """ 
         coordinates = [upperLeftCoord]
         
+        # For every "piece" of the car, adds a tuple to the list coordinates, corresponding to the coordinates of that
+        # piece.
         for n in range(1,self.length):
             if self.horizontal == True:
                 coordinates.append((upperLeftCoord[0]+n, upperLeftCoord[1]))
@@ -130,30 +132,70 @@ class Parking(object):
     def occupiedBy(self, pos):
         return self.parkList[pos[0]][pos[1]]
 
-    def moveCarInParking(self, car, distance):
+    def moveCarInParking(self, car, upperLeftCoord, distance):
         """
         Moves a car, by changing it position in the parking class and changing it's coordinates in the car class.
         
         @car: car to be moved (instance of the car class)
         @distance: distance the car is moved. Positive if the car is moved right/down and negative if it is moved left/up.
         """
-        horizontal = car.isHorizontal()
+        # Retrieves a list of tuples corresponding to the coordinates of the car
         startPos = car.getPosition()
-        length = car.getLength()
-        
-        # nextTileIndex is 1 if the car is moved right/down, and -1 if the car is moved left/up. It is also 1 if the car is not
-        # moved (distance = 0). 
-        # It is used to check wether the tiles the car wants to move over are free, or if another car blocks the way.
-        nextTileIndex = int(math.copysign(1,distance))        
         
         if car.isHorizontal():
-            for x-coord in (startPos[-nextTileIndex][0] + nextTileIndex, startPos[-nextTileIndex][0] + nextTileIndex + distance):
+            # Moving the car to the right
+            if distance > 0:
+                for x in range(startPos[-1][0] + 1, \
+    startPos[-1][0] + 1 + distance):
+                    if x >= width:
+                        raise ValueError\
+    ("Cannot move car trough the parking walls.")
+                    if self.parkList[x][startPos[0][1]] != None:
+                        raise ValueError\
+    ("Cannot move car, there is another car in the way.")
+        
+            # Moving the car to the left
+            if distance < 0:
+                for x in range(startPos[0][0] - 1, \
+    startPos[0][0] - 1 - distance, -1):
+                    if x < 0:
+                        raise ValueError\
+    ("Cannot move car trough the parking walls.")
+                    if self.parkList[x][startPos[0][1]] != None:
+                        raise ValueError\
+    ("Cannot move car, there is another car in the way.")
+        
+        for coord in startPos:
+            newPos.append((startPos[
+            
+        elif not car.isHorizontal():
+            # Moving the car down
+            if distance > 0:
+                for y in range(startPos[-1][1] + 1, \
+    startPos[-1][1] + 1 + distance):
+                    if y >= length:
+                        raise ValueError\
+    ("Cannot move car trough the parking walls.")
+                    if self.parkList[startPos[0][0]][y] != None:
+                        raise ValueError\
+    ("Cannot move car, there is another car in the way.")
+
+            # Moving the car up
+            if distance < 0:
+                for y in range(startPos[0][1] - 1, \
+    startPos[0][1] - 1 - distance, -1):
+                    if y < 0:
+                        raise ValueError\
+    ("Cannot move car trough the parking walls.")
+                    if self.parkList[startPos[0][0]][y] != None:
+                        raise ValueError\
+    ("Cannot move car, there is another car in the way.")                
+            
                 # Alix : Here, hier was ik laatst bezig. -nextTileIndex klopt niet, het moet 0 zijn als de auto naar links gaat.
                 # Patrick: Alix, als je je regels niet meer dan ~ 80 breed doet
                 # zou dat chill zijn.
                
-                if self.parkList[x-coord][startPos[0][1]] != None:
-                    raise ValueError("Cannot move car, there is another car in the way.")
+                
 
             
             try:
