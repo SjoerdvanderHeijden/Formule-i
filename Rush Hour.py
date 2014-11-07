@@ -46,7 +46,7 @@ class Car(object):
         """ 
         coordinates = [upperLeftCoord]
         
-        for section in range(1,length+1):
+        for n in range(1,self.length):
             if self.horizontal == True:
                 coordinates.append((upperLeftCoord[0]+n, upperLeftCoord[1]))
             elif self.horizontal == False:
