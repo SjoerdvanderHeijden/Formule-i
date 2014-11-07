@@ -13,34 +13,47 @@ class Car(object):
     # This number will be increased each time a new car is added.
     name = 0
     
-    def __init__(self, posList):
+    def __init__(self, length, horizontal):
         """
-        input: posList = list with tuples with all coordinates of the car.
+        @length: length of the car (2 or 3)
+        @horizontal: True if car is horizontal, False if it is vertical
         """
-        self.posList = posList
+        self.length = length
+        self.horizontal = horizontal
+        
+        # Assigns another number to every new car
         self.name = Car.name
         Car.name +=1
-
-        # Calculates wether the car is an horizontal position.
-        if posList[0][0] == posList[1][0]:
-            self.horizontal = True
-        elif posList[0][1] == posList[1][1]:
-            self.horizontal = False
-        else:
-            raise ValueError("Invalid coordinates!")
 
     def getName(self):
         return self.name
 
-    def getPos(self):
-        return self.posList
-
-    def isHorizontal(self):
-        # Returns TRUE if car is in an HORIZONTAL position, FALSE if cas is in a VERTICAL position.
-        return self.horizontal
-
     def getLength(self):
         return len(self.posList)
+        
+    def isHorizontal(self):
+        # Returns TRUE if car is in an HORIZONTAL position, FALSE if car is in a VERTICAL position.
+        return self.horizontal
+        
+    def getPos(self, upperLeftCoord):
+        """
+        Calculates the coordinates of the car, given the upper left coordinates of the car.
+        
+        @upperLeftCoord: most upper left coordinates, in the form (x,y).
+        (tuple containing two integers)
+        
+        return: list of tuples corresponding to all the coordinates of the car
+        """ 
+        coordinates = [upperLeftCoord]
+        
+        for section in range(1,length+1):
+            if self.horizontal == True:
+                coordinates.append((upperLeftCoord[0]+n, upperLeftCoord[1]))
+            elif self.horizontal == False:
+                coordinates.append((upperLeftCoord[0],upperLeftCoord[1]+n))
+        
+        return coordinates
+
 
     def moveCar(self, distance):
         """
@@ -168,6 +181,12 @@ class Parking(object):
         # Changes the coordinates of the car in its own class. 
         car.moveCar(distance)
             
+def BreadthFirstSimulation():
+    pass
+    
+    
+    
+
 
 def runSimulation():
     audi = RedCar([(6,0),(6,1)])
