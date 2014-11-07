@@ -144,20 +144,27 @@ class Parking(object):
         startPos = car.getPosition()
         # Makes a copy of the current parking. The new position of the car will 
         # be stored in this copy 
-        newParking = list(self.parkList)
+        newParking = deepcopy(self)
         
         if car.isHorizontal():
-            # Moving the car to the right
+            # Moves the car to the RIGHT:
+            # First, checks if it possible. For every tile in the way of moving..
             if distance > 0:
                 for x in range(startPos[-1][0] + 1, \
     startPos[-1][0] + 1 + distance):
+                    #..checks wether is is still in the parking.
                     if x >= width:
                         raise ValueError\
     ("Cannot move car trough the parking walls.")
+                    #..checks wether the way is free of cars.
                     if self.parkList[x][startPos[0][1]] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
-        
+            # Second, actually moves the car.
+            # !!!This part only works if the car is moved by 1 tile!!!
+            newParking.parkList[startPos[0][0]][startPos[0][1]] = None
+            newParking.parkList[startPos[-1][0]+distance][startPos[0][1]] = car
+            
             # Moving the car to the left
             if distance < 0:
                 for x in range(startPos[0][0] - 1, \
@@ -168,11 +175,10 @@ class Parking(object):
                     if self.parkList[x][startPos[0][1]] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
-        
-        for move in range(0,distance):
-            newParking[startPos[move][0]][startPos[0][1]] = None
-            newParking[startPos[move][0]+distance][startPos[0][1]] = car
-            newPos.append((startPos[
+            # Second, actually moves the car.
+            # !!!This part only works if the car is moved by 1 tile!!!
+            newParking.parkList[startPos[-1][0]][startPos[0][1]] = None
+            newParking.parkList[startPos[0][0]+distance][startPos[0][1]] = car
             
         elif not car.isHorizontal():
             # Moving the car down
@@ -185,6 +191,10 @@ class Parking(object):
                     if self.parkList[startPos[0][0]][y] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
+            # Second, actually moves the car.
+            # !!!This part only works if the car is moved by 1 tile!!!
+            newParking.parkList[startPos[0][0]][startPos[0][1]] = None
+            newParking.parkList[startPos[0][0]][startPos[-1][1]+distance] = car
 
             # Moving the car up
             if distance < 0:
@@ -196,8 +206,13 @@ class Parking(object):
                     if self.parkList[startPos[0][0]][y] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")                
+            # Second, actually moves the car.
+            # !!!This part only works if the car is moved by 1 tile!!!
+            newParking.parkList[startPos[0][0]][startPos[-1][1]] = None
+            newParking.parkList[startPos[0][0]][startPos[0][0]+distance] = car
             
-                # Alix : Here, hier was ik laatst bezig. -nextTileIndex klopt niet, het moet 0 zijn als de auto naar links gaat.
+        return newParking.parkList
+            
                 # Patrick: Alix, als je je regels niet meer dan ~ 80 breed doet
                 # zou dat chill zijn.
                
