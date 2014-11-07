@@ -123,8 +123,7 @@ class Parking(object):
                 
 
     def getParking(self):
-        # This print can be changed into a return if necessary.
-        print self.parkList
+        return self.parkList
 
     def getExit(self):
         return self.exitPos
@@ -134,13 +133,18 @@ class Parking(object):
 
     def moveCarInParking(self, car, upperLeftCoord, distance):
         """
-        Moves a car, by changing it position in the parking class and changing it's coordinates in the car class.
+        Moves a car, by changing it position in the parking class and changing 
+        it's coordinates in the car class.
         
         @car: car to be moved (instance of the car class)
-        @distance: distance the car is moved. Positive if the car is moved right/down and negative if it is moved left/up.
+        @distance: distance the car is moved. Positive if the car is moved 
+        right/down and negative if it is moved left/up.
         """
         # Retrieves a list of tuples corresponding to the coordinates of the car
         startPos = car.getPosition()
+        # Makes a copy of the current parking. The new position of the car will 
+        # be stored in this copy 
+        newParking = list(self.parkList)
         
         if car.isHorizontal():
             # Moving the car to the right
@@ -165,7 +169,9 @@ class Parking(object):
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
         
-        for coord in startPos:
+        for move in range(0,distance):
+            newParking[startPos[move][0]][startPos[0][1]] = None
+            newParking[startPos[move][0]+distance][startPos[0][1]] = car
             newPos.append((startPos[
             
         elif not car.isHorizontal():
