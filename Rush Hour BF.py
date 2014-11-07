@@ -29,7 +29,7 @@ class Car(object):
         return self.name
 
     def getLength(self):
-        return len(self.posList)
+        return self.length
         
     def isHorizontal(self):
         # Returns TRUE if car is in an HORIZONTAL position, FALSE if car is in a VERTICAL position.
@@ -51,41 +51,15 @@ class Car(object):
         for n in range(1,self.length):
             if self.horizontal == True:
                 coordinates.append((upperLeftCoord[0]+n, upperLeftCoord[1]))
-            elif self.horizontal == False:
+            else:
                 coordinates.append((upperLeftCoord[0],upperLeftCoord[1]+n))
         
         return coordinates
-
-
-    def moveCar(self, distance):
-        """
-        Changes the coordinates of the car by changing self.posList
-            
-        @distance: Number of tiles the car is moved. Positive if the car is moved right/down, negative if moved left/up.
-        """
-        coord = self.getPos()
-        
-        if self.isHorizontal():
-            for i in xrange(len(coord)):
-                # x-coordinates are adjusted
-                coord[i] = (coord[i][0] + distance, coord[i][1])
-        else:
-            for i in xrange(len(coord)):
-                # y-coordinates are adjusted
-                coord[i] = (coord[i][0], coord[i][1] + distance)
-                
-        self.posList = coord
-
-    def isAt(self, pos):
-        # @pos: type: tuple
-        return pos in self.posList
-        
-        
     
-    
-
 class RedCar(Car):
-    # It is probably better if simulation or parking checks wether the red car is at the exit.
+    """
+    The car that needs to get out of the parking space.
+    """
     pass
 
 class Parking(object):
@@ -94,10 +68,11 @@ class Parking(object):
 
     input: width, height: integers. exitpos: tuple. carlist: list
     """
-    def __init__(self, width, height, exitPos, carList):
+    def __init__(self, width, height, exitPos):
         self.width = width
         self.height = height
         self.exitPos = exitPos
+        self.carList = []
 
         # Parking representation is a list of lists. The lists correspond to x-coordinates, and their indexes to y-coordinates.
         # Thus: Element at position (x,y) is found at parkList[x][y]
@@ -105,24 +80,30 @@ class Parking(object):
         # (x,y), parkList[x][y] returns None. 
         self.parkList = [ [None for y in xrange(height)] for x in xrange(width)]
 
-        # Cars are added at their position
-        for car in carList:
-            posList = car.getPos()
-            
-            for pos in posList:
-                x, y = pos[0], pos[1]
 
-                try:
-                    if self.parkList[x][y] == None:
-                        self.parkList[x][y] = car
-                    else:
-                        raise ValueError("Double car placing!")
-                    
-                except IndexError:
-                    raise ValueError("Car out of parking range!")
+    def addCar(self, car, upperLeftCoord):
+        """
+        Adds a Car object to Parking.
+
+        @car: car object.
+        @upperLeftCoord: position (tuple) of upper left coordinate.
+        """
+        for pos in car.getPos(upperLeftCoord):
+            x, y = pos[0], pos[1]
+
+            try:
+                if self.parkList[x][y] == None:
+                    self.parkList[x][y] = car
+                else:
+                    raise ValueError("Double car placing!")
                 
+            except IndexError:
+                raise ValueError("Car out of parking range!")
+        
 
     def getParking(self):
+        # List representation of Parking (lists in list).
+        # For printing in terminal just use: print 
         return self.parkList
 
     def getExit(self):
@@ -148,7 +129,7 @@ class Parking(object):
         (list of lists)
         """
         # Retrieves a list of tuples corresponding to the coordinates of the car
-        startPos = car.getPosition()
+        startPos = car.getPos()
         # Makes a copy of the current parking. The new position of the car will 
         # be stored in this copy 
         newParking = deepcopy(self)
@@ -219,24 +200,46 @@ class Parking(object):
             newParking.parkList[startPos[0][0]][startPos[0][0]+distance] = car
             
         return newParking.parkList
+
+
+    def __str__(self):
+        output = self.parkList[:]
+
+        for x in xrange(self.width):
+            for y in xrange(self.height):
+                if output[x][y] == None:
+                    output[x][y] = '.'
+                else:
+                    output[x][y] = output[x][y].getName()
+
+        print '*',
+        for i in xrange(self.width):
+            print '*',
+        print '*'
             
-                # Patrick: Alix, als je je regels niet meer dan ~ 80 breed doet
-                # zou dat chill zijn.
+        for y in xrange(self.height):
+            print '*',
+            for x in xrange(self.width):
+                print str(output[x][y]),
+            print '*'
+
+        print '*',
+        for i in xrange(self.width):
+            print '*',
+        print '*'
+
+        return "Exit: "+ str(self.exitPos)
                 
-def printParking(parking):
-    """
-    prints the list of lists of a parking in a nice way
-    """
-    for row in parking.parkList:
-        print row
 
 def testMoveCarInParking():             
-    audi = RedCar([(6,0),(6,1)])
-    seat = Car([(1,2),(1,3)])
-    exitPos1 = (6,6)
-    parking1 = Parking(6,6,exitPos1,[audi,seat])   
+    audi = RedCar(2,True)
+    seat = Car(2,False)
+    exitPos1 = (6,2)
+    parking1 = Parking(6,6,exitPos1)
+    parking1.addCar(audi, (0,0))
+    parking1.addCar(seat, (3,2))
 
-    printParking(parking1)
+    print parking1
 
 testMoveCarInParking()
             
@@ -248,49 +251,18 @@ def BreadthFirstSimulation(parking):
     # can be moved. Starts in the upper left corner, and goes down, first the 
     # first column, then the second..
     
-    x-coord = 0
-    y-coord = 0
+    x_coord = 0
+    y_coord = 0
     
     for column in parking.parkList:
         # evCar voor "eventual car" ;) 
         for evCar in column:
             if evCar != None:
                 try:
-                    newParkinparking.moveCarInParking(evCar, (x-coord, y-coord), 1)
+                    newParkinparking.moveCarInParking(evCar, (x_coord, y_coord), 1)
                 except ValueError:
                     pass
-            y-coord += 1
-    x-coord += 1
+            y_coord += 1
+    x_coord += 1
                 
-    
-    
-    
-
-
-def runSimulation():
-    audi = RedCar([(6,0),(6,1)])
-    seat = Car([(1,2),(1,3)])
-    exitPos1 = (6,6)
-    parking1 = Parking(3,4,exitPos1,[audi,seat])
-
-    solutions = []
-    solve(parking1)
-
-
-### !!! IK BEDENK ME NET DAT WE GEEN COORDINATEN IN 'CAR' MOETEN OPSLAAN.
-# ER KOMEN NAMELIJK ALLEMAAL PARKEERPLAATSEN DIE NAAR DEZELFDE AUTO('S) WIJZEN..
-
-    def solve(parking):
-        # Patrick: er moet nog iets komen tegen loops + er moet bepaald worden
-        # hoe er wordt gecheckt wanneer een puzzel is opgelost.
-        if not solved:
-            for car in cars:
-                # Dit gaat alleen werken als moveCarInParking een nieuw
-                #  Parking object returned.
-                solve(parking.moveCarInParking(car, 1))
-                solve(parking.moveCarInParking(car, -1))
-                
-        else:
-            save solution
-
     
