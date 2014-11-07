@@ -21,7 +21,7 @@ class Car(object):
         self.length = length
         self.horizontal = horizontal
         
-        # Assigns another number to every new car
+        # Assigns new number to every new car
         self.name = Car.name
         Car.name +=1
 
@@ -133,12 +133,19 @@ class Parking(object):
 
     def moveCarInParking(self, car, upperLeftCoord, distance):
         """
-        Moves a car, by changing it position in the parking class and changing 
-        it's coordinates in the car class.
+        Moves a car, by making a copy of the parking instance and 
+        changing the position of the car in parkList of the copy.
         
         @car: car to be moved (instance of the car class)
+        @upperLeftCoord: upper left coordinate of the car to be moved.
+        (tuple containing two integers)
         @distance: distance the car is moved. Positive if the car is moved 
         right/down and negative if it is moved left/up.
+        !!! As it is written now, the car is only moved in the right
+        way if the distance is +1 or -1!!!
+        
+        return: the parkList of the copy, with the car at another position
+        (list of lists)
         """
         # Retrieves a list of tuples corresponding to the coordinates of the car
         startPos = car.getPosition()
@@ -215,37 +222,46 @@ class Parking(object):
             
                 # Patrick: Alix, als je je regels niet meer dan ~ 80 breed doet
                 # zou dat chill zijn.
-               
                 
+def printParking(parking):
+    """
+    prints the list of lists of a parking in a nice way
+    """
+    for row in parking.parkList:
+        print row
 
+def testMoveCarInParking():             
+    audi = RedCar([(6,0),(6,1)])
+    seat = Car([(1,2),(1,3)])
+    exitPos1 = (6,6)
+    parking1 = Parking(6,6,exitPos1,[audi,seat])   
+
+    printParking(parking1)
+
+testMoveCarInParking()
             
-            try:
-                for pos in startPos:
-                    x, y = pos[0], pos[1]
-                    self.parkList[x][y] = None
-                    self.parkList[x+distance][y] = car
-            except IndexError:
-                raise ValueError("Cannot move car, there is another car in the way.")
+def BreadthFirstSimulation(parking):
+    """
+    @parking: parking to be solved. (instance of Parking)
+    """ 
+    # Looks at every tile of parking, to see if there is a car there that
+    # can be moved. Starts in the upper left corner, and goes down, first the 
+    # first column, then the second..
+    
+    x-coord = 0
+    y-coord = 0
+    
+    for column in parking.parkList:
+        # evCar voor "eventual car" ;) 
+        for evCar in column:
+            if evCar != None:
+                try:
+                    newParkinparking.moveCarInParking(evCar, (x-coord, y-coord), 1)
+                except ValueError:
+                    pass
+            y-coord += 1
+    x-coord += 1
                 
-        else:
-            for y-coord in (startPos[0][-1], startPos[-1][0]+distance):
-                if self.parkList[x-coord][startPos[1]]!= None:
-                    raise ValueError("Cannot move car, there is another car in the way.")          
-            try:
-                for pos in startPos:
-                    x, y = pos[0], pos[1]
-                    self.parkList[x][y] = None
-                    self.parkList[x][y+distance] = car
-            except IndexError:
-                raise ValueError("New position out of range.")
-            
-        
-            
-        # Changes the coordinates of the car in its own class. 
-        car.moveCar(distance)
-            
-def BreadthFirstSimulation():
-    pass
     
     
     
