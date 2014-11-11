@@ -2,7 +2,7 @@
 # Contributors: Patrick Schilder, Sjoerd van der Heijden and Alix Dodu
 
 
-import math, copy
+import math, copy, Queue
 
 
 class Car(object):
@@ -178,7 +178,7 @@ class Parking(object):
             if distance > 0:
                 for y in range(startPos[-1][1] + 1, \
     startPos[-1][1] + 1 + distance):
-                    if y >= self.length:
+                    if y >= self.height:
                         raise ValueError\
     ("Cannot move car trough the parking walls.")
                     if self.parkList[startPos[0][0]][y] != None:
@@ -252,7 +252,6 @@ def testMoveCarInParking():
     parking3 = parking2.moveCarInParking((1,2), 1)
     print parking3
 
-testMoveCarInParking()
             
 def BreadthFirstSimulation(parking):
     """
@@ -262,18 +261,51 @@ def BreadthFirstSimulation(parking):
     # can be moved. Starts in the upper left corner, and goes down, first the 
     # first column, then the second..
     
-    x_coord = 0
-    y_coord = 0
-    
-    for column in parking.parkList:
-        # evCar voor "eventual car" ;) 
-        for evCar in column:
-            if evCar != None:
-                try:
-                    newParkinparking.moveCarInParking(evCar, (x_coord, y_coord), 1)
-                except ValueError:
-                    pass
-            y_coord += 1
-    x_coord += 1
+    x = 0
+    y = 0
+
+    q = Queue.Queue()
+    q.put(parking)
+
+    visited = set()
+
+    while not q.empty():
+        currentParking = q.get()
+
+        if type(currentParking.occupiedBy(currentParking.getExit())) == RedCar:
+            print currentParking
+            break
+
+        if currentParking not in visited:
+            visited.add(currentParking)
+
+            for column in currentParking.getParking():
+                # evCar voor "eventual car" ;) 
+                for evCar in column:
+                    print x,y
+                    if evCar != None:
+                        print 'moving:', x,y
+                        try:
+                            q.put(currentParking.moveCarInParking((x, y), 1))
+                        except ValueError:
+                            pass
+                        try:
+                            q.put(currentParking.moveCarInParking((x, y), -1))
+                        except ValueError:
+                            pass
+                    y += 1
+                x += 1
+                y = 0
+            x = 0
+            y = 0
                 
     
+if __name__ == '__main__':
+    audi = RedCar(2,True)
+    seat = Car(2,False)
+    exitPos1 = (5,2)
+    parking1 = Parking(6,6,exitPos1)
+    parking1.addCar(audi, (0,2))
+    parking1.addCar(seat, (3,2))
+
+    BreadthFirstSimulation(parking1)
