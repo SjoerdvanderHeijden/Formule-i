@@ -161,7 +161,7 @@ class Parking(object):
             # Moving the car to the left
             if distance < 0:
                 for x in range(startPos[0][0] - 1, \
-    startPos[0][0] - 1 - distance, -1):
+    startPos[0][0] - 1 + distance, -1):
                     if x < 0:
                         raise ValueError\
     ("Cannot move car trough the parking walls.")
@@ -172,8 +172,9 @@ class Parking(object):
             # !!!This part only works if the car is moved by 1 tile!!!
             newParking.parkList[startPos[-1][0]][startPos[0][1]] = None
             newParking.parkList[startPos[0][0]+distance][startPos[0][1]] = car
-            
-        elif not car.isHorizontal():
+        
+        # If car is not horizontal:
+        else:
             # Moving the car down
             if distance > 0:
                 for y in range(startPos[-1][1] + 1, \
@@ -192,7 +193,7 @@ class Parking(object):
             # Moving the car up
             if distance < 0:
                 for y in range(startPos[0][1] - 1, \
-    startPos[0][1] - 1 - distance, -1):
+    startPos[0][1] - 1 + distance, -1):
                     if y < 0:
                         raise ValueError\
     ("Cannot move car trough the parking walls.")
@@ -202,7 +203,7 @@ class Parking(object):
             # Second, actually moves the car.
             # !!!This part only works if the car is moved by 1 tile!!!
             newParking.parkList[startPos[0][0]][startPos[-1][1]] = None
-            newParking.parkList[startPos[0][0]][startPos[0][0]+distance] = car
+            newParking.parkList[startPos[0][0]][startPos[0][1]+distance] = car
             
         return newParking
 
@@ -278,19 +279,23 @@ def BreadthFirstSimulation(parking):
 
         if currentParking not in visited:
             visited.add(currentParking)
+            movedCars = set()
 
             for column in currentParking.getParking():
                 # evCar voor "eventual car" ;) 
                 for evCar in column:
                     print x,y
-                    if evCar != None:
-                        print 'moving:', x,y
+                    if evCar != None and evCar not in movedCars:
                         try:
                             q.put(currentParking.moveCarInParking((x, y), 1))
+                            movedCars.add(evCar)
+                            print 'moved', x,',',y, '+1'
                         except ValueError:
                             pass
                         try:
                             q.put(currentParking.moveCarInParking((x, y), -1))
+                            movedCars.add(evCar)
+                            print 'moved', x,',',y, '-1'
                         except ValueError:
                             pass
                     y += 1
