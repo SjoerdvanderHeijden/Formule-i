@@ -77,6 +77,7 @@ class Parking(object):
         self.width = width
         self.height = height
         self.exitPos = exitPos
+        self.parent = None
 
         # Parking representation is a list of lists. The lists correspond to x-coordinates, and their indexes to y-coordinates.
         # Thus: Element at position (x,y) is found at parkList[x][y]
@@ -116,6 +117,12 @@ class Parking(object):
     def occupiedBy(self, pos):
         return self.parkList[pos[0]][pos[1]]
 
+    def getParent(self):
+        return self.parent
+
+    def setParent(self, parent):
+        self.parent = parent
+
     def moveCarInParking(self, upperLeftCoord, distance):
         """
         Moves a car, by making a copy of the parking instance and 
@@ -137,7 +144,7 @@ class Parking(object):
         # Makes a copy of the current parking. The new position of the car will 
         # be stored in this copy 
         newParking = copy.deepcopy(self)
-        
+        newParking.setParent(self)        
         
         if car.isHorizontal():
             # Moves the car to the RIGHT:
@@ -236,6 +243,7 @@ class Parking(object):
 
         return endRow
                 
+##==========================================================================##
 
 def testMoveCarInParking():             
     audi = RedCar(2,True)
@@ -274,7 +282,7 @@ def BreadthFirstSimulation(parking):
         currentParking = q.get()
 
         if type(currentParking.occupiedBy(currentParking.getExit())) == RedCar:
-            print currentParking
+            oplossing =  currentParking
             break
 
         if currentParking not in visited:
@@ -284,18 +292,15 @@ def BreadthFirstSimulation(parking):
             for column in currentParking.getParking():
                 # evCar voor "eventual car" ;) 
                 for evCar in column:
-                    print x,y
                     if evCar != None and evCar not in movedCars:
                         try:
-                            q.put(currentParking.moveCarInParking((x, y), 1))
+                            q.put(currentParking.moveCarInParking((x, y), 1) )
                             movedCars.add(evCar)
-                            print 'moved', x,',',y, '+1'
                         except ValueError:
                             pass
                         try:
-                            q.put(currentParking.moveCarInParking((x, y), -1))
+                            q.put(currentParking.moveCarInParking((x, y), -1) )
                             movedCars.add(evCar)
-                            print 'moved', x,',',y, '-1'
                         except ValueError:
                             pass
                     y += 1
@@ -303,6 +308,16 @@ def BreadthFirstSimulation(parking):
                 y = 0
             x = 0
             y = 0
+
+    route = [oplossing]
+    parent = oplossing.getParent()
+
+    while parent != None:
+        route.append(parent)
+        parent = parent.getParent()
+
+    route.reverse()
+    return route
                 
     
 if __name__ == '__main__':
@@ -313,4 +328,5 @@ if __name__ == '__main__':
     parking1.addCar(audi, (0,2))
     parking1.addCar(seat, (3,2))
 
-    BreadthFirstSimulation(parking1)
+    for board in BreadthFirstSimulation(parking1):
+        print board
