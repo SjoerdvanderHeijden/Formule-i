@@ -162,8 +162,8 @@ class Parking(object):
     ("Cannot move car, there is another car in the way.")
             # Second, actually moves the car.
             # !!!This part only works if the car is moved by 1 tile!!!
-            newParking.parkList[startPos[0][0]][startPos[0][1]] = None
-            newParking.parkList[startPos[-1][0]+distance][startPos[0][1]] = car
+                newParking.parkList[startPos[0][0]][startPos[0][1]] = None
+                newParking.parkList[startPos[-1][0]+distance][startPos[0][1]] = car
             
             # Moving the car to the left
             if distance < 0:
@@ -177,8 +177,8 @@ class Parking(object):
     ("Cannot move car, there is another car in the way.")
             # Second, actually moves the car.
             # !!!This part only works if the car is moved by 1 tile!!!
-            newParking.parkList[startPos[-1][0]][startPos[0][1]] = None
-            newParking.parkList[startPos[0][0]+distance][startPos[0][1]] = car
+                newParking.parkList[startPos[-1][0]][startPos[0][1]] = None
+                newParking.parkList[startPos[0][0]+distance][startPos[0][1]] = car
         
         # If car is not horizontal:
         else:
@@ -194,8 +194,8 @@ class Parking(object):
     ("Cannot move car, there is another car in the way.")
             # Second, actually moves the car.
             # !!!This part only works if the car is moved by 1 tile!!!
-            newParking.parkList[startPos[0][0]][startPos[0][1]] = None
-            newParking.parkList[startPos[0][0]][startPos[-1][1]+distance] = car
+                newParking.parkList[startPos[0][0]][startPos[0][1]] = None
+                newParking.parkList[startPos[0][0]][startPos[-1][1]+distance] = car
 
             # Moving the car up
             if distance < 0:
@@ -209,39 +209,38 @@ class Parking(object):
     ("Cannot move car, there is another car in the way.")                
             # Second, actually moves the car.
             # !!!This part only works if the car is moved by 1 tile!!!
-            newParking.parkList[startPos[0][0]][startPos[-1][1]] = None
-            newParking.parkList[startPos[0][0]][startPos[0][1]+distance] = car
+                newParking.parkList[startPos[0][0]][startPos[-1][1]] = None
+                newParking.parkList[startPos[0][0]][startPos[0][1]+distance] = car
             
         return newParking
 
 
     def __str__(self):
-        output = self.parkList[:]
+        input_data = self.parkList[:]
+        output = ''
 
-        print '*',
+        output += '* '
         for i in xrange(self.width):
-            print '*',
-        print '*'
+            output += '* '
+        output += '* \n'
             
         for y in xrange(self.height):
-            print '*',
+            output += '* '
             for x in xrange(self.width):
-                if type(output[x][y]) == Car:
-                    print str(output[x][y].getName()),
+                if type(input_data[x][y]) == Car:
+                    output += str(input_data[x][y].getName()) + ' '
                 elif (x,y) == self.exitPos:
-                    print '@',
-                elif output[x][y] == None:
-                    print '.',
+                    output += '@ '
+                elif input_data[x][y] == None:
+                    output += '. '
                 else:
-                    print 'R',
+                    output += 'R '
+            output += '* \n'
 
-            print '*'
-
-        endRow = ''
         for i in xrange(self.width + 2):
-            endRow += '* '
+            output += '* '
 
-        return endRow
+        return output
                 
 ##==========================================================================##
 
@@ -321,12 +320,36 @@ def BreadthFirstSimulation(parking):
                 
     
 if __name__ == '__main__':
-    audi = RedCar(2,True)
-    seat = Car(2,False)
+
     exitPos1 = (5,2)
     parking1 = Parking(6,6,exitPos1)
-    parking1.addCar(audi, (0,2))
-    parking1.addCar(seat, (3,2))
+
+    rood = RedCar(2,True)
+    parking1.addCar(rood,(3,2))
+
+    blauw = Car(2,True)
+    parking1.addCar(blauw,(3,0))
+
+    oranje = Car(2,True)
+    parking1.addCar(oranje,(4,3))
+
+    blauw2 = Car(2,True)
+    parking1.addCar(blauw2,(1,4))
+
+    groen = Car(2,True)
+    parking1.addCar(groen,(4,5))
+
+    oranje2 = Car(2,False)
+    parking1.addCar(oranje2,(0,4))
+
+    vracht1 = Car(3,False)
+    parking1.addCar(vracht1,(2,0))
+
+    vracht2 = Car(3,False)
+    parking1.addCar(vracht2,(5,0))
+
+    vracht3 = Car(3,False)
+    parking1.addCar(vracht3,(3,3))
 
     for board in BreadthFirstSimulation(parking1):
         print board
