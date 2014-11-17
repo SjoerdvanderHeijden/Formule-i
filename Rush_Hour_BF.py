@@ -145,37 +145,45 @@ class Parking(object):
         # be stored in this copy 
         newParking = copy.deepcopy(self)
         newParking.setParent(self)        
-        
+
+        # debugging
+        print "hi", distance, upperLeftCoord, car.getName()
+        if distance == 0:
+            raise ValueError("0")
+                
         if car.isHorizontal():
-            # Moves the car to the RIGHT:
-            # First, checks if it is possible. For every tile in the way of moving..
+            print car.getName(), "is horizontal"
+
+            #Checks if the car can be moved if trying to go RIGHT:
+            # First, checks if it is possible. 
+            #   1) Checks wether the car is moved inside the parking.
+            if (startPos[-1][0] + distance) >= self.width:
+                raise ValueError ("Cannot move car trough the parking walls.")
+            #   2) For every tile in the way of moving checks wether the way is free of cars.
             if distance > 0:
                 for x in range(startPos[-1][0] + 1, \
-    startPos[-1][0] + 1 + distance):
-                    #..checks wether is is still in the parking.
-                    if x >= self.width:
-                        raise ValueError\
-    ("Cannot move car trough the parking walls.")
-                    #..checks wether the way is free of cars.
+    startPos[-1][0] +1 + distance):
+                    print "x1",x
                     if self.parkList[x][startPos[0][1]] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
-            # # Second, actually moves the car.
             # # !!!This part only works if the car is moved by 1 tile!!!
             # newParking.parkList[startPos[0][0]][startPos[0][1]] = None
             # newParking.parkList[startPos[-1][0]+distance][startPos[0][1]] = car
             
-            # Moving the car to the LEFT
-            if distance < 0:
+            # Checks wether the car can be moved if trying to go LEFT
+            elif distance < 0:
                 for x in range(startPos[0][0] - 1, \
-    startPos[0][0] - 1 + distance, -1):
+    startPos[0][0] -1 + distance, -1):
+                    print "x2",x
                     if x < 0:
                         raise ValueError\
     ("Cannot move car trough the parking walls.")
                     if self.parkList[x][startPos[0][1]] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
-            # Second, actually moves the car.
+
+            # Second, actually moves the car (horizontal).
             for coord in startPos:
                 newParking.parkList[coord[0]][coord[1]] = None
             for coord in startPos:
@@ -186,12 +194,14 @@ class Parking(object):
             
 
 
-        # If car is not horizontal:
+        # If car is vertical:
         else:
-            # Moving the car down
+            print car.getName(),"is vertical"
+            # Checks wether the car can be moved DOWN
             if distance > 0:
                 for y in range(startPos[-1][1] + 1, \
     startPos[-1][1] + 1 + distance):
+                    print "y3",y
                     if y >= self.height:
                         raise ValueError\
     ("Cannot move car trough the parking walls.")
@@ -203,22 +213,27 @@ class Parking(object):
             # newParking.parkList[startPos[0][0]][startPos[0][1]] = None
             # newParking.parkList[startPos[0][0]][startPos[-1][1]+distance] = car
 
-            # Moving the car up
-            if distance < 0:
+            # Checks wether the car can be moved UP
+            elif distance < 0:
                 for y in range(startPos[0][1] - 1, \
-    startPos[0][1] - 1 + distance, -1):
+    startPos[0][1] -1 + distance, -1):
+                    print "y4",y
                     if y < 0:
                         raise ValueError\
     ("Cannot move car trough the parking walls.")
                     if self.parkList[startPos[0][0]][y] != None:
                         raise ValueError\
-    ("Cannot move car, there is another car in the way.")                
-            # # Second, actually moves the car.
+    ("Cannot move car, there is another car in the way.")   
+                 
+            # Second, actually moves the car (vertical).
+            for coord in startPos:
+                newParking.parkList[coord[0]][coord[1]] = None
+            for coord in startPos:
+                newParking.parkList[coord[0]][coord[1] + distance] = car
+
             # # !!!This part only works if the car is moved by 1 tile!!!
             # newParking.parkList[startPos[0][0]][startPos[-1][1]] = None
             # newParking.parkList[startPos[0][0]][startPos[0][1]+distance] = car
-            
-            
                 
         return newParking
 
@@ -272,28 +287,42 @@ def BreadthFirstSimulation(parking):
     while not q.empty():
         currentParking = q.get()
 
-        if type(currentParking.occupiedBy(currentParking.getExit())) == RedCar:
-            oplossing =  currentParking
-            break
+        print currentParking
 
+        if type(currentParking.occupiedBy(currentParking.getExit())) == RedCar:
+            oplossing = currentParking
+            print "jeaj"
+            break
+        if currentParking in visited:
+            print "\n \n \n\n\n\n\n\n\n\n\n\n\n\n\n"
         if currentParking not in visited:
             visited.add(currentParking)
-            movedCars = set()
+            print visited
+
+            # Keeps track of the cars that were already tried to be moved.
+            visitedCars = set()
 
             for column in currentParking.getParking():
                 # evCar voor "eventual car" ;) 
                 for evCar in column:
-                    if evCar != None and evCar not in movedCars:
+                    if evCar != None and evCar not in visitedCars:
+##                        for move in [-4,-3,-2,-1,1,2,3,4]:
+##                            try q.put(currentParking.moveCarInParking((x,y,)\
+##                                                                      move)
+##                            except ValueError:
+##                                      pass
+##                        
                         try:
                             q.put(currentParking.moveCarInParking((x, y), 1) )
-                            movedCars.add(evCar)
+                            print currentParking.moveCarInParking((x, y), 1)
                         except ValueError:
                             pass
                         try:
                             q.put(currentParking.moveCarInParking((x, y), -1) )
-                            movedCars.add(evCar)
+                            print currentParking.moveCarInParking((x, y), -1) 
                         except ValueError:
                             pass
+                        visitedCars.add(evCar)
                     y += 1
                 x += 1
                 y = 0
@@ -360,3 +389,4 @@ def testMoveCarInParking():
 
 if __name__ == '__main__':
     testMoveCarInParking()
+    board_1()
