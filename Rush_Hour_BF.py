@@ -123,7 +123,7 @@ class Parking(object):
     def setParent(self, parent):
         self.parent = parent
 
-def moveCarInParking(self, upperLeftCoord, distance):
+    def moveCarInParking(self, upperLeftCoord, distance):
         """
         Moves a car, by making a copy of the parking instance and 
         changing the position of the car in parkList of the copy.
@@ -252,23 +252,7 @@ def moveCarInParking(self, upperLeftCoord, distance):
                 
 ##==========================================================================##
 
-def testMoveCarInParking():             
-    audi = RedCar(2,True)
-    seat = Car(2,False)
-    exitPos1 = (5,2)
-    parking1 = Parking(6,6,exitPos1)
-    parking1.addCar(audi, (0,2))
-    parking1.addCar(seat, (3,2))
-    print parking1
-    
-    parking2 = parking1.moveCarInParking((0,2), 1)
-    print parking2
-
-    # a.k.a. botsing:
-    parking3 = parking2.moveCarInParking((1,2), 1)
-    print parking3
-
-            
+           
 def BreadthFirstSimulation(parking):
     """
     @parking: parking to be solved. (instance of Parking)
@@ -327,8 +311,7 @@ def BreadthFirstSimulation(parking):
     return route
                 
     
-if __name__ == '__main__':
-
+def board_1():
     exitPos1 = (5,2)
     parking1 = Parking(6,6,exitPos1)
 
@@ -361,3 +344,19 @@ if __name__ == '__main__':
 
     for board in BreadthFirstSimulation(parking1):
         print board
+
+def testMoveCarInParking():             
+    audi = RedCar(2,True)
+    seat = Car(2,False)
+    exitPos1 = (5,2)
+    parking1 = Parking(6,6,exitPos1)
+    parking1.addCar(audi, (0,2))
+    parking1.addCar(seat, (3,2))
+
+    for board in BreadthFirstSimulation(parking1):
+        print board
+
+
+
+if __name__ == '__main__':
+    testMoveCarInParking()
