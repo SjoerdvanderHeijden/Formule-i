@@ -345,7 +345,8 @@ def BreadthFirstSimulation(parking):
 
     route.reverse()
     return route
-                
+
+##==========================================================================##             
     
 def board_1():
     exitPos1 = (5,2)
@@ -382,36 +383,48 @@ def board_1():
         print board
         
         
-def board_2():
+def board_3():
     exitPos2 = (5,2)
     parking1 = Parking(6,6,exitPos2)
 
-    rood = RedCar(2,True)
-    parking1.addCar(rood,(0,3))
+    rood = RedCar(2, True)
+    parking1.addCar(rood,(0,2))
 
-    blauw = Car(2,True)
-    parking1.addCar(blauw,(0,0))
+    blauw = Car(2, True)
+    parking1.addCar(blauw,(1,0))
 
-    blauw2 = Car(2,True)
-    parking1.addCar(blauw2,(2,0))
+    blauw2 = Car(2, False)
+    parking1.addCar(blauw2,(3,1))
 
-    oranje = Car(2,True)
-    parking1.addCar(oranje,(5,1))
+    blauw3 = Car(2, True)
+    parking1.addCar(blauw3,(3,3))
 
-    groen = Car(2,True)
-    parking1.addCar(groen,(,5))
+    oranje = Car(2, True)
+    parking1.addCar(oranje,(1,1))
 
-    oranje2 = Car(2,False)
+    oranje2 = Car(2, False)
     parking1.addCar(oranje2,(0,4))
 
-    vracht1 = Car(3,False)
-    parking1.addCar(vracht1,(2,0))
+    groen1 = Car(2, True)
+    parking1.addCar(groen1,(4,1))
 
-    vracht2 = Car(3,False)
-    parking1.addCar(vracht2,(5,0))
+    groen2 = Car(2, False)
+    parking1.addCar(groen2,(2,2))
 
-    vracht3 = Car(3,False)
-    parking1.addCar(vracht3,(3,3))
+    groen3 = Car(2,False)
+    parking1.addCar(groen3,(5,2))
+
+    groen4 = Car(2,True)
+    parking1.addCar(groen4,(0,3))
+
+    groen5 = Car(2,False)
+    parking1.addCar(groen5,(2,4))
+
+    groen6 = Car(2,True)
+    parking1.addCar(groen6,(4,4))
+
+    vracht1 = Car(3,True)
+    parking1.addCar(vracht1,(3,0))
 
     for board in BreadthFirstSimulation(parking1):
         print board
@@ -431,6 +444,6 @@ def testMoveCarInParking():
 
 if __name__ == '__main__':
     #testMoveCarInParking()
-    board_1()
+    board_3()
 
 
