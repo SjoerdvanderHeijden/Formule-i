@@ -380,6 +380,41 @@ def board_1():
 
     for board in BreadthFirstSimulation(parking1):
         print board
+        
+        
+def board_2():
+    exitPos2 = (5,2)
+    parking1 = Parking(6,6,exitPos2)
+
+    rood = RedCar(2,True)
+    parking1.addCar(rood,(0,3))
+
+    blauw = Car(2,True)
+    parking1.addCar(blauw,(0,0))
+
+    blauw2 = Car(2,True)
+    parking1.addCar(blauw2,(2,0))
+
+    oranje = Car(2,True)
+    parking1.addCar(oranje,(5,1))
+
+    groen = Car(2,True)
+    parking1.addCar(groen,(,5))
+
+    oranje2 = Car(2,False)
+    parking1.addCar(oranje2,(0,4))
+
+    vracht1 = Car(3,False)
+    parking1.addCar(vracht1,(2,0))
+
+    vracht2 = Car(3,False)
+    parking1.addCar(vracht2,(5,0))
+
+    vracht3 = Car(3,False)
+    parking1.addCar(vracht3,(3,3))
+
+    for board in BreadthFirstSimulation(parking1):
+        print board
 
 def testMoveCarInParking():             
     audi = RedCar(2,True)
