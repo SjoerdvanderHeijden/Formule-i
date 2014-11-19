@@ -111,17 +111,6 @@ class Parking(object):
         # For printing in terminal just use: print 
         return self.parkList
 
-    def getHash(self):
-        output = ''
-        for i in self.parkList:
-            for j in i:
-                if j == None:
-                    output += '0'
-                else:
-                    output += str(j.getName())
-
-        return output
-
     def getExit(self):
         return self.exitPos
 
@@ -249,30 +238,51 @@ class Parking(object):
         return newParking
 
 
+    def __key(self):
+        output = ''
+        for i in self.parkList:
+            for j in i:
+                if j == None:
+                    output += '0'
+                else:
+                    output += str(j.getName())
+
+        return output
+
+    def __eq__(x, y):
+        return x.__key() == y.__key()
+
+    def __hash__(self):
+        return hash(self.__key())
+
     def __str__(self):
         input_data = self.parkList[:]
         output = ''
 
-        output += '* '
+        output += '*  '
         for i in xrange(self.width):
-            output += '* '
+            output += '*  '
         output += '* \n'
             
         for y in xrange(self.height):
-            output += '* '
+            output += '*  '
             for x in xrange(self.width):
                 if type(input_data[x][y]) == Car:
-                    output += str(input_data[x][y].getName()) + ' '
+                    if input_data[x][y].getName() > 9:
+                        output += str(input_data[x][y].getName()) + ' '
+                    else:
+                        output += str(input_data[x][y].getName()) + '  '
                 elif (x,y) == self.exitPos:
-                    output += '@ '
+                    output += '@  '
                 elif input_data[x][y] == None:
-                    output += '. '
+                    output += '.  '
                 else:
-                    output += 'R '
+                    output += 'R  '
             output += '* \n'
 
         for i in xrange(self.width + 2):
-            output += '* '
+            output += '*  '
+        output += '\n'
 
         return output
                 
@@ -302,11 +312,11 @@ def BreadthFirstSimulation(parking):
             oplossing = currentParking
             break
 
-        #if currentParking.getHash() in visited:
-           # print currentParking.getHash()
+        # if currentParking in visited:
+        #     print 'duplicate'
 
-        if currentParking.getHash() not in visited:
-            visited.add(currentParking.getHash())
+        if currentParking not in visited:
+            visited.add(currentParking)
 
             # Keeps track of the cars that were already tried to be moved.
             visitedCars = set()
@@ -315,12 +325,14 @@ def BreadthFirstSimulation(parking):
                 # evCar voor "eventual car" ;) 
                 for evCar in column:
                     if evCar != None and evCar not in visitedCars:
-##                        for move in [-4,-3,-2,-1,1,2,3,4]:
-##                            try q.put(currentParking.moveCarInParking((x,y,)\
-##                                                                      move)
-##                            except ValueError:
-##                                      pass
-##                        
+
+                        # for move in [-4,-3,-2,-1,1,2,3,4]:
+                        #     try:
+                        #         q.put(currentParking.moveCarInParking((x,y,),\
+                        #                                                 move))
+                        #     except ValueError:
+                        #         pass
+
                         try:
                             q.put(currentParking.moveCarInParking((x, y), 1) )
                         except ValueError:
@@ -379,8 +391,12 @@ def board_1():
     vracht3 = Car(3,False)
     parking1.addCar(vracht3,(3,3))
 
-    for board in BreadthFirstSimulation(parking1):
+    boards = BreadthFirstSimulation(parking1)
+
+    for board in boards:
         print board
+
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
         
         
 def board_3():
