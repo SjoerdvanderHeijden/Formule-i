@@ -3,6 +3,7 @@
 import Tkinter as tk
 #import Rush_Hour_BF as rh
 import testsimulatie as tst
+import time
 
 class App:
 
@@ -25,29 +26,42 @@ class App:
         self.step = 0
         self.createStepList(parking)
         self.drawBeginParking()
+        self.delay = .03
 
-
-        self.quit = tk.Button(
+        quitbutton = tk.Button(
             buttonframe, text="QUIT", fg="red", command=buttonframe.quit
             )
-        self.quit.grid(row = 2, column = 0)
+        quitbutton.grid(row = 2, column = 0)
 
-        self.prevStep = tk.Button(buttonframe, text="<<",\
+        prevStep = tk.Button(buttonframe, text="<<",\
             command=self.oneStepBack)
-        self.prevStep.grid(row = 1, column = 0)
+        prevStep.grid(row = 1, column = 0)
         
-        self.nextStep = tk.Button(buttonframe, text=">>",\
+        nextStep = tk.Button(buttonframe, text=">>",\
             command=self.oneStep)
-        self.nextStep.grid(row = 1, column = 2)
+        nextStep.grid(row = 1, column = 2)
         
-        self.run = tk.Button(buttonframe, text="Run",\
-            command=self.oneStep)
-        self.run.grid(row = 1, column = 1)
+        run = tk.Button(buttonframe, text="Run",\
+            command=self.run)
+        run.grid(row = 1, column = 1)
         
-        self.stopRun = tk.Button(buttonframe, text="Pause",\
+#        self.stop = tk.IntVar()
+        stopRun = tk.Button(buttonframe, text="Pause",\
             command=self.stopRun)
-        self.stopRun.grid(row = 2, column = 1)
+        stopRun.grid(row = 2, column = 1)
         
+        self.stepdisplay = tk.StringVar()
+        stepDisplayLabel = tk.Label(buttonframe, textvariable=self.stepdisplay)
+        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)))
+        stepDisplayLabel.grid(row = 2, column = 5, sticky = 'E')
+        
+        self.goto = tk.StringVar()
+        gotoEntry = tk.Entry(buttonframe, textvariable = self.goto, width = 4)
+        gotoEntry.grid(row = 2, column = 3)
+        gotoButton = tk.Button(buttonframe, text = 'Go to step',\
+            command = self.gotoStep)
+        gotoButton.grid(row = 2, column = 4)
+
     
     def createStepList(self, child):
         '''
@@ -57,7 +71,7 @@ class App:
         
         takes the final Parking instance of the Rush Hour puzzle
         
-        returns: nothing, but makes its creations into instance attribute.
+        returns: nothing, but saves its creations as instance attributes.
         '''
         parent = child.getParent()
         steplist = []
@@ -73,7 +87,9 @@ class App:
             for row in xrange(len(childParking)):
                 if stop:
                     break
+                
                 for column in xrange(len(childParking[0])):
+                    
                     if childParking[row][column] != None and\
                         parentParking[row][column] == None and not cfound:
                         cfound = True
@@ -112,7 +128,7 @@ class App:
         puzzle, draws a grid of the appropriate size and places the cars as
         indicated. The red car is coloured red, the others are blue.
         
-        takes and returns nothing.
+        takes and returns nothing, but draws the visualization.
         '''
         
         beginParking = self.beginParking
@@ -156,46 +172,90 @@ class App:
         
     def stopRun(self):
         self.stop = True
-                
-    def oneStep(self, speed = 5, backward = False, gotostep = False, run = False):
-        '''
-        TODO
         
+    def run(self):
+        '''
+        Animates all steps towards solving the puzzle, or up until 
+        '''
+        self.stop = False
+        while not self.stop:
+            self.oneStep()
+            time.sleep(self.delay*5)
+            
+    def gotoStep(self):
+        self.stop = True
+        self.delay = 0
+        diff = int(self.goto.get())-self.step
+        if diff > 0:
+            for i in xrange(diff):
+                self.oneStep()
+        elif diff < 0:
+            for i in xrange(-diff):
+                self.oneStepBack()
+        self.delay = .03
+            
+    def oneStep(self):
+        '''
         Animates a single step taken to solve the Rush Hour puzzle. The current
         step is remembered in self.step.
         
-        takes:
-        speed, defines how fast the cars are moved in the grid
-        gotostep, allows to jump to a specified step.
-        backward, allows to go back steps instead of forwards.
-        run, allows to autorun to the solution
+        returns nothing, but updates the app.
+        '''
+        try:
+            move = self.steplist[self.step]
+        except:
+            self.stop = True
+            return
+        
+        self.step+=1
+        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)))        
+        
+        dx = move[2][0]-move[1][0]
+        dy = move[2][1]-move[1][1]
+        
+        if dx != 0:
+            for interval in xrange(dx*10):
+                time.sleep(self.delay)
+                self.canvas.move('car'+str(move[0].getName()), dx*5, 0)
+                self.canvas.update()
+        elif dy != 0:
+            for interval in xrange(dy*10):
+                time.sleep(self.delay)
+                self.canvas.move('car'+str(move[0].getName()), 0, dy*5)
+                self.canvas.update()
+
+
+    def oneStepBack(self):
+        '''
+        Animates a single step back 'towards' solving the Rush Hour puzzle.
+        The current step is remembered in self.step.
         
         returns nothing, but updates the app.
         '''
-        move = self.steplist[self.step]
-
-        try:
-            self.canvas.move('car'+str(move[0].getName()),\
-            (move[2][0]-move[1][0])*50, (move[2][1]-move[1][1])*50)
-        except:
-            print 'already solved!'
-        self.step+=1
-
-        self.canvas.update()
-#        if run:
-#            if self.stop:(move[2][0]-move[1][0])*
-#                pass (move[2][1]-move[1][1])*
-#            else:
-#                self.oneStep(speed, run = True)
-    def oneStepBack(self):
-        move = self.steplist[self.step-1]
-        try:
-            self.canvas.move('car'+str(move[0].getName()),\
-            (move[2][0]-move[1][0])*-50, (move[2][1]-move[1][1])*-50)
-        except:
-            print 'already at start!'
+        if self.step == 0:
+            self.stop = True
+            return
+            
         self.step-=1
-    
+        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)))
+        
+        move = self.steplist[self.step]
+        
+        dx = move[1][0]-move[2][0]
+        dy = move[1][1]-move[2][1]
+        
+        if dx != 0:
+            for interval in xrange(0,dx*10,-1):
+                time.sleep(self.delay)
+                self.canvas.move('car'+str(move[0].getName()), dx*5, 0)
+                self.canvas.update()
+        elif dy != 0:
+            for interval in xrange(0,dy*10,-1):
+                time.sleep(self.delay)
+                self.canvas.move('car'+str(move[0].getName()), 0, dy*5)
+                self.canvas.update()
+
+
 root = tk.Tk()
 
 def testParking():             
