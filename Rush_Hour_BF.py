@@ -4,6 +4,9 @@
 
 import math, copy, Queue
 
+# from pycallgraph import PyCallGraph
+# from pycallgraph.output import GraphvizOutput
+
 
 class Car(object):
     """
@@ -287,7 +290,7 @@ class Parking(object):
         return output
                 
 ##==========================================================================##
-
+#profilers
            
 def BreadthFirstSimulation(parking):
     """
@@ -459,7 +462,11 @@ def testMoveCarInParking():
 
 
 if __name__ == '__main__':
-    #testMoveCarInParking()
-    board_3()
+    testMoveCarInParking()
+    #board_3()
+
+
+    # with PyCallGraph(output=GraphvizOutput()):
+    #     board_3()
 
 
