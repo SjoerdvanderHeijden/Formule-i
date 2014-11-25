@@ -4,6 +4,8 @@
 
 import math, copy, Queue
 
+from timeit import Timer
+
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
@@ -448,6 +450,13 @@ def board_2():
     vracht = Car(3,v)
     parking1.addCar(vracht, (5,1))
 
+    boards = BreadthFirstSimulation(parking1)
+
+    for board in boards:
+        print board
+
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
+
         
 def board_3():
     exitPos2 = (5,2)
@@ -492,8 +501,12 @@ def board_3():
     vracht1 = Car(3,True)
     parking1.addCar(vracht1,(3,0))
 
-    for board in BreadthFirstSimulation(parking1):
+    boards = BreadthFirstSimulation(parking1)
+
+    for board in boards:
         print board
+
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
 
 
 def board_4():
@@ -569,6 +582,13 @@ def board_4():
     groen4 = Car(2,h)
     parking1.addCar(groen4, (7,8))
 
+    boards = BreadthFirstSimulation(parking1)
+
+    for board in boards:
+        print board
+
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
+
 
 def testMoveCarInParking():             
     audi = RedCar(2,True)
@@ -578,14 +598,21 @@ def testMoveCarInParking():
     parking1.addCar(audi, (0,2))
     parking1.addCar(seat, (3,2))
 
-    for board in BreadthFirstSimulation(parking1):
+    boards = BreadthFirstSimulation(parking1)
+
+    for board in boards:
         print board
+
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
 
 
 
 if __name__ == '__main__':
-    testMoveCarInParking()
     #board_3()
+    #testMoveCarInParking()
+
+    t = Timer(lambda: testMoveCarInParking())
+    print t.timeit(number=1)
 
 
     # with PyCallGraph(output=GraphvizOutput()):
