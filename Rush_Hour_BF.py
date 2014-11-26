@@ -290,7 +290,18 @@ class Parking(object):
         output += '\n'
 
         return output
-                
+        
+##==========================================================================##
+def saveResults():
+# Create text file with results
+    name = "results"+".txt"
+    
+    try: 
+        file = open(name,'r+')
+    except (error file not exist:
+        file = open(name, 'w')
+    file.write(output simulation as string)
+
 ##==========================================================================##
 #profilers
            
