@@ -84,16 +84,16 @@ class Parking(object):
         self.exitPos = exitPos
         self.parent = None
 
-        # Parking representation is a list of lists. The lists correspond to x-coordinates, and their indexes to y-coordinates.
+        # Parking representation is a tuple of tuples. The tuples correspond to x-coordinates, and their indexes to y-coordinates.
         # Thus: Element at position (x,y) is found at parkList[x][y]
-        # If a car is positioned at (x,y), parkList[x][y] returns the car as an instance of Car, if no car is positioned at 
+        # If a car is positioned at (x,y), parkList[x][y] returns the car as the name of the Car, if no car is positioned at 
         # (x,y), parkList[x][y] returns None. 
-        self.parkList = [ [None for y in xrange(height)] for x in xrange(width)]
+        self.parkList =  tuple( ( tuple((None for y in xrange(height))) for x in xrange(width)) )
 
 
     def addCar(self, car, upperLeftCoord):
         """
-        Adds a Car object to Parking.
+        Adds the name of a Car object to Parking.
 
         @car: car object.
         @upperLeftCoord: position (tuple) of upper left coordinate.
@@ -103,13 +103,41 @@ class Parking(object):
 
             try:
                 if self.parkList[x][y] == None:
-                    self.parkList[x][y] = car
+                    tempList = list(self.parkList)
+                    tempCol = list(tempList[x])
+                    tempCol[y] = car.getName()
+                    tempList[x] = tuple(tempCol)
+                    self.parkList = tuple(tempList)
                 else:
                     raise ValueError("Double car placing!")
                 
             except IndexError:
                 raise ValueError("Car out of parking range!")
+
+    def clearTiles(self, car, upperLeftCoord):
+        """
+        Set's the value of tiles where a car stood to None if the car moves away
+
+        @car: car object.
+        @upperLeftCoord: position (tuple) of upper left coordinate.
+        """
         
+        for pos in car.getPos(upperLeftCoord):
+            x, y = pos[0], pos[1]
+
+            try:
+                if self.parkList[x][y] == car.getName():
+                    tempList = list(self.parkList)
+                    tempCol = list(tempList[x])
+                    tempCol[y] = None
+                    tempList[x] = tuple(tempCol)
+                    self.parkList = tuple(tempList)
+                else:
+                    raise ValueError("Cannot remove cars other then selected!")
+                
+            except IndexError:
+                raise ValueError("Cannot remove outside parking range!")
+
 
     def getParking(self):
         # List representation of Parking (lists in list).
@@ -120,7 +148,10 @@ class Parking(object):
         return self.exitPos
 
     def occupiedBy(self, pos):
-        return self.parkList[pos[0]][pos[1]]
+        if self.parkList[pos[0]][pos[1]] == None:
+            return None
+
+        return cars[self.parkList[pos[0]][pos[1]]]
 
     def getParent(self):
         return self.parent
@@ -162,131 +193,101 @@ class Parking(object):
             #Checks if the car can be moved if trying to go RIGHT:
             # First, checks if it is possible. 
             #   1) Checks wether the car is moved inside the parking.
-            if (startPos[-1][0] + distance) >= self.width:
+            if (startPos[-1][0] + distance) >= self.width or (startPos[0][0] + distance) < 0:
                 raise ValueError ("Cannot move car trough the parking walls.")
-            #   2) For every tile in the way of moving checks wether the way is free of cars.
+            #   2) For every tile in the way of moving checks whether the way is free of cars.
             if distance > 0:
-                for x in range(startPos[-1][0] + 1, \
-    startPos[-1][0] +1 + distance):
+                nextTile = startPos[-1][0] + 1
+                for x in range(nextTile, nextTile + distance):
                     #print "x1",x
                     if self.parkList[x][startPos[0][1]] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
-            # # !!!This part only works if the car is moved by 1 tile!!!
-            # newParking.parkList[startPos[0][0]][startPos[0][1]] = None
-            # newParking.parkList[startPos[-1][0]+distance][startPos[0][1]] = car
+
             
             # Checks wether the car can be moved if trying to go LEFT
-            elif distance < 0:
-                for x in range(startPos[0][0] - 1, \
-    startPos[0][0] -1 + distance, -1):
+            else:
+                nextTile = startPos[0][0] - 1
+                for x in range(nextTile, nextTile + distance, -1):
                     #print "x2",x
-                    if x < 0:
-                        raise ValueError\
-    ("Cannot move car trough the parking walls.")
                     if self.parkList[x][startPos[0][1]] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
 
             # Second, actually moves the car (horizontal).
-            for coord in startPos:
-                newParking.parkList[coord[0]][coord[1]] = None
-            for coord in startPos:
-                newParking.parkList[coord[0]+distance][coord[1]] = car
+            # for coord in startPos:
+            #     newParking.parkList[coord[0]][coord[1]] = None
+            # for coord in startPos:
+            #     newParking.parkList[coord[0]+distance][coord[1]] = car
 
-            # newParking.parkList[startPos[-1][0]][startPos[0][1]] = None
-            # newParking.parkList[startPos[0][0]+distance][startPos[0][1]] = car
+            newParking.clearTiles(car, startPos[0])
+            newParking.addCar(car, (startPos[0][0]+distance,startPos[0][1]) )
             
 
 
         # If car is vertical:
         else:
-            #print car.getName(),"is vertical"
+            if (startPos[-1][1] + distance) >= self.height or (startPos[0][1] + distance) < 0:
+                raise ValueError ("Cannot move car trough the parking walls.")
             # Checks wether the car can be moved DOWN
             if distance > 0:
-                for y in range(startPos[-1][1] + 1, \
-    startPos[-1][1] + 1 + distance):
-                    #print "y3",y
-                    if y >= self.height:
-                        raise ValueError\
-    ("Cannot move car trough the parking walls.")
+                nextTile = startPos[-1][1] + 1
+                for y in range(nextTile, nextTile + distance):
                     if self.parkList[startPos[0][0]][y] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")
-            # # Second, actually moves the car.
-            # # !!!This part only works if the car is moved by 1 tile!!!
-            # newParking.parkList[startPos[0][0]][startPos[0][1]] = None
-            # newParking.parkList[startPos[0][0]][startPos[-1][1]+distance] = car
+
 
             # Checks wether the car can be moved UP
-            elif distance < 0:
-                for y in range(startPos[0][1] - 1, \
-    startPos[0][1] -1 + distance, -1):
-                    #print "y4",y
-                    if y < 0:
-                        raise ValueError\
-    ("Cannot move car trough the parking walls.")
+            else:
+                nextTile = startPos[0][1] - 1
+                for y in range(nextTile, nextTile + distance, -1):
                     if self.parkList[startPos[0][0]][y] != None:
                         raise ValueError\
     ("Cannot move car, there is another car in the way.")   
                  
             # Second, actually moves the car (vertical).
-            for coord in startPos:
-                newParking.parkList[coord[0]][coord[1]] = None
-            for coord in startPos:
-                newParking.parkList[coord[0]][coord[1] + distance] = car
+            # for coord in startPos:
+            #     newParking.parkList[coord[0]][coord[1]] = None
+            # for coord in startPos:
+            #     newParking.parkList[coord[0]][coord[1] + distance] = car
 
-            # # !!!This part only works if the car is moved by 1 tile!!!
-            # newParking.parkList[startPos[0][0]][startPos[-1][1]] = None
-            # newParking.parkList[startPos[0][0]][startPos[0][1]+distance] = car
+            newParking.clearTiles(car, startPos[0])
+            newParking.addCar(car, (startPos[0][0],startPos[0][1]+distance) )
+
                 
         return newParking
 
 
-    def __key(self):
-        output = ''
-        for i in self.parkList:
-            for j in i:
-                if j == None:
-                    output += '0'
-                else:
-                    output += str(j.getName())
-
-        return output
-
     def __eq__(x, y):
-        return x.__key() == y.__key()
+        return x.parkList == y.parkList
 
     def __hash__(self):
-        return hash(self.__key())
+        return hash(self.parkList)
 
     def __str__(self):
         input_data = self.parkList[:]
         output = ''
 
-        output += '*  '
-        for i in xrange(self.width):
-            output += '*  '
-        output += '* \n'
-            
+                   
         for y in xrange(self.height):
-            output += '*  '
+            output += ' '
             for x in xrange(self.width):
-                if type(input_data[x][y]) == Car:
-                    if input_data[x][y].getName() > 9:
-                        output += str(input_data[x][y].getName()) + ' '
+                if input_data[x][y] > 1:
+                    if input_data[x][y] > 9:
+                        output += str(input_data[x][y]) + ' '
                     else:
-                        output += str(input_data[x][y].getName()) + '  '
+                        output += str(input_data[x][y]) + '  '
                 elif (x,y) == self.exitPos:
                     output += '@  '
                 elif input_data[x][y] == None:
                     output += '.  '
-                else:
+                elif input_data[x][y] == 1:
                     output += 'R  '
-            output += '* \n'
+                else:
+                    output += '#  '
+            output += '\n'
 
-        for i in xrange(self.width + 2):
-            output += '*  '
         output += '\n'
 
         return output
@@ -331,21 +332,32 @@ def BreadthFirstSimulation(parking):
                 for evCar in column:
                     if evCar != None and evCar not in visitedCars:
 
-                        # for move in [-4,-3,-2,-1,1,2,3,4]:
-                        #     try:
-                        #         q.put(currentParking.moveCarInParking((x,y,),\
-                        #                                                 move))
-                        #     except ValueError:
-                        #         pass
+                        ##### more tiles is 1 step: #####
 
-                        try:
-                            q.put(currentParking.moveCarInParking((x, y), 1) )
-                        except ValueError:
-                            pass
-                        try:
-                            q.put(currentParking.moveCarInParking((x, y), -1) )
-                        except ValueError:
-                            pass
+                        for move in xrange(-1,-5,-1):
+                            try:
+                                q.put(currentParking.moveCarInParking((x,y,),\
+                                                                        move))
+                            except ValueError:
+                                break
+
+                        for move in xrange(1,5):
+                            try:
+                                q.put(currentParking.moveCarInParking((x,y,),\
+                                                                        move))
+                            except ValueError:
+                                break
+
+                        ##### 1 tile is 1 step: #####
+
+                        # try:
+                        #     q.put(currentParking.moveCarInParking((x, y), 1) )
+                        # except ValueError:
+                        #     pass
+                        # try:
+                        #     q.put(currentParking.moveCarInParking((x, y), -1) )
+                        # except ValueError:
+                        #     pass
                         visitedCars.add(evCar)
                     y += 1
                 x += 1
@@ -461,45 +473,47 @@ def board_2():
 def board_3():
     exitPos2 = (5,2)
     parking1 = Parking(6,6,exitPos2)
+    global cars
+    cars = [None]
 
-    rood = RedCar(2, True)
-    parking1.addCar(rood,(0,2))
+    cars.append(RedCar(2, True))
+    parking1.addCar(cars[-1],(0,2))
 
-    blauw = Car(2, True)
-    parking1.addCar(blauw,(1,0))
+    cars.append(Car(2, True))
+    parking1.addCar(cars[-1],(1,0))
 
-    blauw2 = Car(2, False)
-    parking1.addCar(blauw2,(3,1))
+    cars.append(Car(2, False))
+    parking1.addCar(cars[-1],(3,1))
 
-    blauw3 = Car(2, True)
-    parking1.addCar(blauw3,(3,3))
+    cars.append(Car(2, True))
+    parking1.addCar(cars[-1],(3,3))
 
-    oranje = Car(2, True)
-    parking1.addCar(oranje,(1,1))
+    cars.append(Car(2, True))
+    parking1.addCar(cars[-1],(1,1))
 
-    oranje2 = Car(2, False)
-    parking1.addCar(oranje2,(0,4))
+    cars.append(Car(2, False))
+    parking1.addCar(cars[-1],(0,4))
 
-    groen1 = Car(2, True)
-    parking1.addCar(groen1,(4,1))
+    cars.append(Car(2, True))
+    parking1.addCar(cars[-1],(4,1))
 
-    groen2 = Car(2, False)
-    parking1.addCar(groen2,(2,2))
+    cars.append(Car(2, False))
+    parking1.addCar(cars[-1],(2,2))
 
-    groen3 = Car(2,False)
-    parking1.addCar(groen3,(5,2))
+    cars.append(Car(2,False))
+    parking1.addCar(cars[-1],(5,2))
 
-    groen4 = Car(2,True)
-    parking1.addCar(groen4,(0,3))
+    cars.append(Car(2,True))
+    parking1.addCar(cars[-1],(0,3))
 
-    groen5 = Car(2,False)
-    parking1.addCar(groen5,(2,4))
+    cars.append(Car(2,False))
+    parking1.addCar(cars[-1],(2,4))
 
-    groen6 = Car(2,True)
-    parking1.addCar(groen6,(4,4))
+    cars.append(Car(2,True))
+    parking1.addCar(cars[-1],(4,4))
 
-    vracht1 = Car(3,True)
-    parking1.addCar(vracht1,(3,0))
+    cars.append(Car(3,True))
+    parking1.addCar(cars[-1],(3,0))
 
     boards = BreadthFirstSimulation(parking1)
 
@@ -515,6 +529,7 @@ def board_4():
     
     exitPos1 = (8,4)
     parking1 = Parking(9,9,exitPos1)
+
     
     rood = RedCar(2,h)
     parking1.addCar(rood,(1,4))
@@ -591,12 +606,16 @@ def board_4():
 
 
 def testMoveCarInParking():             
-    audi = RedCar(2,True)
-    seat = Car(2,False)
     exitPos1 = (5,2)
     parking1 = Parking(6,6,exitPos1)
-    parking1.addCar(audi, (0,2))
-    parking1.addCar(seat, (3,2))
+    global cars
+    cars = [None]
+
+    cars.append(RedCar(2,True))
+    parking1.addCar(cars[-1], (0,2))
+
+    cars.append(Car(2,False))
+    parking1.addCar(cars[-1], (3,2))
 
     boards = BreadthFirstSimulation(parking1)
 
@@ -611,7 +630,7 @@ if __name__ == '__main__':
     #board_3()
     #testMoveCarInParking()
 
-    t = Timer(lambda: testMoveCarInParking())
+    t = Timer(lambda: board_3())
     print t.timeit(number=1)
 
 
