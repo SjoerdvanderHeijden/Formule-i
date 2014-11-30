@@ -176,7 +176,7 @@ class Parking(object):
         """
         # Retrieves a list of tuples corresponding to the coordinates of the car
         car = self.occupiedBy(upperLeftCoord)
-        startPos = car.getPos(upperLeftCoord)      
+        startPos = car.getPos(upperLeftCoord)
 
         # debugging
         #print "hi", distance, upperLeftCoord, car.getName()
@@ -218,7 +218,7 @@ class Parking(object):
 
             # Makes a copy of the current parking. The new position of the car will 
             # be stored in this copy 
-            newParking = copy.deepcopy(self)
+            newParking = copy.deepcopy(self)#copy.deepcopy(self)
             newParking.setParent(self)  
 
             newParking.clearTiles(car, startPos[0])
@@ -543,8 +543,6 @@ def board_3():
 
     boards = BreadthFirstSimulation(parking1)
 
-    return boards
-
     for board in boards:
         print board
 
@@ -658,7 +656,7 @@ if __name__ == '__main__':
     #board_3()
     #testMoveCarInParking()
 
-    t = Timer(lambda: board_2())
+    t = Timer(lambda: board_3())
     print t.timeit(number=1)
 
 
