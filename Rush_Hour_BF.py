@@ -114,31 +114,6 @@ class Parking(object):
             except IndexError:
                 raise ValueError("Car out of parking range!")
 
-    def clearTiles(self, car, upperLeftCoord):
-        """
-        Set's the value of tiles where a car stood to None if the car moves away
-
-        @car: car object.
-        @upperLeftCoord: position (tuple) of upper left coordinate.
-        """
-        
-        for pos in car.getPos(upperLeftCoord):
-            x, y = pos[0], pos[1]
-
-            try:
-                if self.parkList[x][y] == car.getName():
-                    tempList = list(self.parkList)
-                    tempCol = list(tempList[x])
-                    tempCol[y] = None
-                    tempList[x] = tuple(tempCol)
-                    self.parkList = tuple(tempList)
-                else:
-                    raise ValueError("Cannot remove cars other then selected!")
-                
-            except IndexError:
-                raise ValueError("Cannot remove outside parking range!")
-
-
     def getParking(self):
         # List representation of Parking (lists in list).
         # For printing in terminal just use: print 
@@ -211,18 +186,53 @@ class Parking(object):
     ("Cannot move car, there is another car in the way.")
 
             # Second, actually moves the car (horizontal).
-            # for coord in startPos:
-            #     newParking.parkList[coord[0]][coord[1]] = None
-            # for coord in startPos:
-            #     newParking.parkList[coord[0]+distance][coord[1]] = car
 
             # Makes a copy of the current parking. The new position of the car will 
             # be stored in this copy 
-            newParking = copy.deepcopy(self)#copy.deepcopy(self)
+            newParking = copy.copy(self)#copy.deepcopy(self)
             newParking.setParent(self)  
 
-            newParking.clearTiles(car, startPos[0])
-            newParking.addCar(car, (startPos[0][0]+distance,startPos[0][1]) )
+            for pos in car.getPos(upperLeftCoord):
+            x, y = pos[0], pos[1]
+
+            ## Attention!! Road work ahead!!!!! ################################################
+            y = upperLeftCoord[1]
+            tempList = list(newParking.parkList)
+
+            #remove:
+            for pos in startPos:
+            x = pos[0]
+
+            try:
+                if tempList[x][y] == car.getName():
+                    tempCol = list(tempList[x])
+                    tempCol[y] = None
+                    tempList[x] = tuple(tempCol)
+                else:
+                    raise ValueError("Cannot remove cars other then selected!")
+                
+            except IndexError:
+                raise ValueError("Cannot remove outside parking range!")
+
+            #place:
+            for pos in startPos:
+            x = pos[0]+distance
+
+            try:
+                if tempList[x][y] == None:
+                    tempCol = list(tempList[x])
+                    tempCol[y] = car.getName()
+                    tempList[x] = tuple(tempCol)
+                else:
+                    raise ValueError("Double car placing!")
+                
+            except IndexError:
+                raise ValueError("Car out of parking range!")
+
+            newParking.parkList = tuple(tempList)
+
+            # newParking.clearTiles(car, startPos[0])
+            # newParking.addCar(car, (startPos[0][0]+distance,startPos[0][1]) )
             
 
 
@@ -248,18 +258,49 @@ class Parking(object):
     ("Cannot move car, there is another car in the way.")   
                  
             # Second, actually moves the car (vertical).
-            # for coord in startPos:
-            #     newParking.parkList[coord[0]][coord[1]] = None
-            # for coord in startPos:
-            #     newParking.parkList[coord[0]][coord[1] + distance] = car
 
             # Makes a copy of the current parking. The new position of the car will 
             # be stored in this copy 
-            newParking = copy.deepcopy(self)
+            newParking = copy.copy(self)
             newParking.setParent(self)  
 
-            newParking.clearTiles(car, startPos[0])
-            newParking.addCar(car, (startPos[0][0],startPos[0][1]+distance) )
+
+            ## Attention!! Road work ahead!!!!! ################################################
+            x = upperLeftCoord[0]
+            tempList = list(newParking.parkList)
+            tempCol = list(tempList[x])
+
+            #clear:
+            for pos in startPos:
+            y = pos[1]
+
+            try:
+                if tempCol[y] == car.getName():
+                    tempCol[y] = None
+                else:
+                    raise ValueError("Cannot remove cars other then selected!")
+                
+            except IndexError:
+                raise ValueError("Cannot remove outside parking range!")
+
+            #place:
+            for pos in startPos:
+            y = pos[1]+distance
+
+            try:
+                if tempCol[y] == None:
+                    tempCol[y] = car.getName()
+                else:
+                    raise ValueError("Double car placing!")
+                
+            except IndexError:
+                raise ValueError("Car out of parking range!")
+
+            tempList[x] = tuple(tempCol)
+            newParking.parkList = tuple(tempList)
+
+            # newParking.clearTiles(car, startPos[0])
+            # newParking.addCar(car, (startPos[0][0],startPos[0][1]+distance) )
 
                 
         return newParking
