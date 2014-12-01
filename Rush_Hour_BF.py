@@ -1,7 +1,6 @@
 # Rush Hour.py
 # Contributors: Patrick Schilder, Sjoerd van der Heijden and Alix Dodu
 
-
 import math, copy, Queue
 
 from timeit import Timer
@@ -9,6 +8,7 @@ from timeit import Timer
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
+version = "V1a"
 
 class Car(object):
     """
@@ -302,15 +302,18 @@ class Parking(object):
         return output
         
 ##==========================================================================##
-def saveResults():
+def saveResults(name, output):
 # Create text file with results
-    name = "results"+".txt"
+# @name: string
+# @output: List of boards, solution of simulation
+    name = name+".txt"
     
-    # try: 
-    #     file = open(name,'r+')
-    # except (error file not exist:
-    #     file = open(name, 'w')
-    # file.write(output simulation as string)
+    try: 
+        file = open(name,'r+')
+        raise ValueError("File already exists.")
+    except:
+        file = open(name, 'w')
+        file.write(output simulation as string)
 
 ##==========================================================================##
 #profilers
@@ -625,11 +628,11 @@ def board_4():
 
     boards = BreadthFirstSimulation(parking1)
 
-    for board in boards:
-        print board
-
-    print 'Opgelost in:', len(boards)-1, ' stappen.'
-
+ #   for board in boards:
+#        print board
+#
+#    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    return boards, len(boards)-1 
 
 def testMoveCarInParking():             
     exitPos1 = (5,2)
