@@ -192,42 +192,39 @@ class Parking(object):
             newParking = copy.copy(self)#copy.deepcopy(self)
             newParking.setParent(self)  
 
-            for pos in car.getPos(upperLeftCoord):
-            x, y = pos[0], pos[1]
-
             ## Attention!! Road work ahead!!!!! ################################################
             y = upperLeftCoord[1]
             tempList = list(newParking.parkList)
 
             #remove:
             for pos in startPos:
-            x = pos[0]
+                x = pos[0]
 
-            try:
-                if tempList[x][y] == car.getName():
-                    tempCol = list(tempList[x])
-                    tempCol[y] = None
-                    tempList[x] = tuple(tempCol)
-                else:
-                    raise ValueError("Cannot remove cars other then selected!")
-                
-            except IndexError:
-                raise ValueError("Cannot remove outside parking range!")
+                try:
+                    if tempList[x][y] == car.getName():
+                        tempCol = list(tempList[x])
+                        tempCol[y] = None
+                        tempList[x] = tuple(tempCol)
+                    else:
+                        raise ValueError("Cannot remove cars other then selected!")
+                    
+                except IndexError:
+                    raise ValueError("Cannot remove outside parking range!")
 
             #place:
             for pos in startPos:
-            x = pos[0]+distance
+                x = pos[0]+distance
 
-            try:
-                if tempList[x][y] == None:
-                    tempCol = list(tempList[x])
-                    tempCol[y] = car.getName()
-                    tempList[x] = tuple(tempCol)
-                else:
-                    raise ValueError("Double car placing!")
-                
-            except IndexError:
-                raise ValueError("Car out of parking range!")
+                try:
+                    if tempList[x][y] == None:
+                        tempCol = list(tempList[x])
+                        tempCol[y] = car.getName()
+                        tempList[x] = tuple(tempCol)
+                    else:
+                        raise ValueError("Double car placing!")
+                    
+                except IndexError:
+                    raise ValueError("Car out of parking range!")
 
             newParking.parkList = tuple(tempList)
 
@@ -272,29 +269,29 @@ class Parking(object):
 
             #clear:
             for pos in startPos:
-            y = pos[1]
+                y = pos[1]
 
-            try:
-                if tempCol[y] == car.getName():
-                    tempCol[y] = None
-                else:
-                    raise ValueError("Cannot remove cars other then selected!")
-                
-            except IndexError:
-                raise ValueError("Cannot remove outside parking range!")
+                try:
+                    if tempCol[y] == car.getName():
+                        tempCol[y] = None
+                    else:
+                        raise ValueError("Cannot remove cars other then selected!")
+                    
+                except IndexError:
+                    raise ValueError("Cannot remove outside parking range!")
 
             #place:
             for pos in startPos:
-            y = pos[1]+distance
+                y = pos[1]+distance
 
-            try:
-                if tempCol[y] == None:
-                    tempCol[y] = car.getName()
-                else:
-                    raise ValueError("Double car placing!")
-                
-            except IndexError:
-                raise ValueError("Car out of parking range!")
+                try:
+                    if tempCol[y] == None:
+                        tempCol[y] = car.getName()
+                    else:
+                        raise ValueError("Double car placing!")
+                    
+                except IndexError:
+                    raise ValueError("Car out of parking range!")
 
             tempList[x] = tuple(tempCol)
             newParking.parkList = tuple(tempList)
@@ -344,9 +341,11 @@ class Parking(object):
         
 ##==========================================================================##
 def saveResults(name, output):
-# Create text file with results
-# @name: string
-# @output: List of boards, solution of simulation
+"""
+Create text file with results
+@name: string
+@output: List of boards, solution of simulation
+"""
     name = name+".txt"
     
     try: 
