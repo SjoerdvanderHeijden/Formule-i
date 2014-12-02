@@ -1,8 +1,8 @@
 # visualization.py
 
 import Tkinter as tk
-#import Rush_Hour_BF as rh
-import testsimulatie as tst
+import Rush_Hour_BF as rh
+#import testsimulatie as tst
 import time
 
 class App:
@@ -16,7 +16,6 @@ class App:
         
         takes the final, solved Parking instance of the puzzle.
         '''
-                
         buttonframe = tk.Frame(master)
         buttonframe.grid(row = 2)
         
@@ -34,35 +33,33 @@ class App:
         quitbutton.grid(row = 2, column = 0)
 
         prevStep = tk.Button(buttonframe, text="<<",\
-            command=self.oneStepBack)
+        command=self.oneStepBack)
         prevStep.grid(row = 1, column = 0)
         
-        nextStep = tk.Button(buttonframe, text=">>",\
-            command=self.oneStep)
+        nextStep = tk.Button(buttonframe, text=">>", command=self.oneStep)
         nextStep.grid(row = 1, column = 2)
         
-        run = tk.Button(buttonframe, text="Run",\
-            command=self.run)
+        run = tk.Button(buttonframe, text="Run", command=self.run)
         run.grid(row = 1, column = 1)
         
-#        self.stop = tk.IntVar()
-        stopRun = tk.Button(buttonframe, text="Pause",\
-            command=self.stopRun)
+        stopRun = tk.Button(buttonframe, text="Pause", command=self.stopRun)
         stopRun.grid(row = 2, column = 1)
         
         self.stepdisplay = tk.StringVar()
-        stepDisplayLabel = tk.Label(buttonframe, textvariable=self.stepdisplay)
-        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)))
+        stepDisplayLabel = tk.Label(buttonframe,\
+        textvariable=self.stepdisplay)
+        
+        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)-1))
         stepDisplayLabel.grid(row = 2, column = 5, sticky = 'E')
         
         self.goto = tk.StringVar()
-        gotoEntry = tk.Entry(buttonframe, textvariable = self.goto, width = 4)
+        gotoEntry = tk.Entry(buttonframe, textvariable=self.goto, width = 4)
         gotoEntry.grid(row = 2, column = 3)
+        
         gotoButton = tk.Button(buttonframe, text = 'Go to step',\
             command = self.gotoStep)
         gotoButton.grid(row = 2, column = 4)
 
-    
     def createStepList(self, child):
         '''
         Generates a list containing all steps done to complete the puzzle in
@@ -84,43 +81,45 @@ class App:
             stop = False
             cfound = False
             pfound = False
+            
             for row in xrange(len(childParking)):
                 if stop:
                     break
                 
                 for column in xrange(len(childParking[0])):
                     
-                    if childParking[row][column] != None and\
+                    if childParking[row][column] != None and not pfound and\
                         parentParking[row][column] == None and not cfound:
                         cfound = True
                         car = childParking[row][column]
                         newcoord = [row,column]
                         
-                    elif childParking[row][column] == None and\
+                    elif childParking[row][column]==None and not cfound and\
                         parentParking[row][column] != None and not pfound:
                         pfound = True
                         car = parentParking[row][column]
                         oldcoord = [row,column]
                         
                     elif cfound and parentParking[row][column] != None:
-                        if car.getName()==parentParking[row][column].getName():
+                        if car == parentParking[row][column]:
                             oldcoord = [row,column]
                             stop = True
                             break
                             
                     elif pfound and childParking[row][column] != None:
-                        if car.getName()==childParking[row][column].getName():
+                        if car == childParking[row][column]:
                             newcoord = [row,column]
                             stop = True
                             break
-
+                        
             steplist.append([car, oldcoord, newcoord])
             
             child = parent
             parent = child.getParent()
-        self.steplist = steplist[::-1]
-        self.beginParking = child
             
+        self.steplist = steplist[::-1]
+        self.steplist += [[1,[0,0],[1,0]]]
+        self.beginParking = child            
             
     def drawBeginParking(self):
         '''
@@ -130,52 +129,59 @@ class App:
         
         takes and returns nothing, but draws the visualization.
         '''
+        parkingInst = self.beginParking
         
-        beginParking = self.beginParking
+        size = len(parkingInst.getParking())*50+1
         
-        size = len(beginParking.getParking())*50+1
-        
-        self.canvas = tk.Canvas(self.canvasframe, width = size, height = size\
-            , bg="white")
+        self.canvas = tk.Canvas(self.canvasframe, width = size,\
+            height = size, bg="white")
         for x in xrange(2, size +2 ,50):
             for y in xrange(2, size +2 ,50):
                 self.canvas.create_line(y, 1, y, size+2)
                 self.canvas.create_line(2, x, size+2, x)
         
-        beginParking = beginParking.getParking()
+        parking = parkingInst.getParking()
         
         placedcars = set()        
-        for row in xrange(len(beginParking)):
-            for column in xrange(len(beginParking[0])):
+        for row in xrange(len(parking)):
+            for column in xrange(len(parking[0])):
                 
-                car = beginParking[row][column]
+                car = parking[row][column]
                 if car in placedcars:
                     continue   
                 
                 try:
                     # generates error if not a car on position (column, row).
-                    coords = car.getPos((row,column))
+                    carInst = parkingInst.occupiedBy((row,column))
+                    coords = carInst.getPos((row,column))
                     placedcars.add(car)
+                    
                 except:
                     continue
                 
-                if isinstance(car, tst.RedCar):
+                if car == 1:
                     self.canvas.create_rectangle(coords[0][0]*50+5,\
                     coords[0][1]*50+5, coords[-1][0]*50+49,\
-                    coords[-1][1]*50+49, fill = 'red', tag = 'car'+str(car.getName()))
+                    coords[-1][1]*50+49, fill = 'red',\
+                    tag = 'car'+str(car))
                 else:
                     self.canvas.create_rectangle(coords[0][0]*50+5,\
                     coords[0][1]*50+5, coords[-1][0]*50+49,\
-                    coords[-1][1]*50+49, fill = 'blue', tag = 'car'+str(car.getName()))
+                    coords[-1][1]*50+49, fill = 'blue',\
+                    tag = 'car'+str(car))
                 
         self.canvas.grid(row = 0)#, columnspan = 2)
         
     def stopRun(self):
+        '''
+        Stops the 'run' command
+        '''
         self.stop = True
         
     def run(self):
         '''
-        Animates all steps towards solving the puzzle, or up until 
+        Animates all steps towards solving the puzzle, or up until the 'stop'
+        or 'goto' button is pressed.
         '''
         self.stop = False
         while not self.stop:
@@ -183,6 +189,9 @@ class App:
             time.sleep(self.delay*5)
             
     def gotoStep(self):
+        '''
+        Rapidly follows the moves to the step specified in the entry window.
+        '''
         self.stop = True
         self.delay = 0
         diff = int(self.goto.get())-self.step
@@ -206,24 +215,23 @@ class App:
         except:
             self.stop = True
             return
-        
+            
         self.step+=1
         self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)))        
         
         dx = move[2][0]-move[1][0]
         dy = move[2][1]-move[1][1]
-        
+
         if dx != 0:
-            for interval in xrange(dx*10):
+            for interval in xrange(10):
                 time.sleep(self.delay)
-                self.canvas.move('car'+str(move[0].getName()), dx*5, 0)
+                self.canvas.move('car'+str(move[0]), dx*5, 0)
                 self.canvas.update()
         elif dy != 0:
-            for interval in xrange(dy*10):
+            for interval in xrange(10):
                 time.sleep(self.delay)
-                self.canvas.move('car'+str(move[0].getName()), 0, dy*5)
+                self.canvas.move('car'+str(move[0]), 0, dy*5)
                 self.canvas.update()
-
 
     def oneStepBack(self):
         '''
@@ -245,29 +253,24 @@ class App:
         dy = move[1][1]-move[2][1]
         
         if dx != 0:
-            for interval in xrange(0,dx*10,-1):
+            for interval in xrange(10):
                 time.sleep(self.delay)
-                self.canvas.move('car'+str(move[0].getName()), dx*5, 0)
+                self.canvas.move('car'+str(move[0]), dx*5, 0)
                 self.canvas.update()
         elif dy != 0:
-            for interval in xrange(0,dy*10,-1):
+            for interval in xrange(10):
                 time.sleep(self.delay)
-                self.canvas.move('car'+str(move[0].getName()), 0, dy*5)
+                self.canvas.move('car'+str(move[0]), 0, dy*5)
                 self.canvas.update()
 
 
-root = tk.Tk()
+def runApp(parking):
+    root = tk.Tk()
+    
+    app = App(root,parking)
+    
+    root.mainloop()
+    root.destroy()
 
-def testParking():             
-    audi = tst.RedCar(2,True)
-    seat = tst.Car(2,False)
-    exitPos1 = (5,2)
-    parking1 = tst.Parking(6,6,exitPos1)
-    parking1.addCar(audi, (0,2))
-    parking1.addCar(seat, (3,2))
-    return tst.BreadthFirstSimulation(parking1)
 
-app = App(root, testParking()[-1])
-
-root.mainloop()
-root.destroy()
+runApp(rh.board_3())
