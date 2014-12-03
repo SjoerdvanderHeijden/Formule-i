@@ -8,7 +8,7 @@ from timeit import Timer
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V1a"
+version = "V2a"
 
 class Car(object):
     """
@@ -340,20 +340,29 @@ class Parking(object):
         return output
         
 ##==========================================================================##
-def saveResults(name, output):
-"""
-Create text file with results
-@name: string
-@output: List of boards, solution of simulation
-"""
-    name = name+".txt"
-    
-    try: 
-        file = open(name,'r+')
-        raise ValueError("File already exists.")
-    except:
-        file = open(name, 'w')
-        file.write(output simulation as string)
+def saveResults(function, fileName):
+	"""
+	Creates text file with the solution to a board described in the argument 
+	function. saveResults will overwrite the previously made file if fileName
+	is not changed. 
+	
+	@function: Function that returns the solution to a board as a list of boards.
+	@fileName: Name of the result file. The version of the code that was used 
+	to obtain the solution will automatically be added to the name of the 
+	file (string)
+	"""
+	name = str(fileName + "_" + version + ".txt")
+
+	file = open(name, 'w')
+
+	boards = function
+	for board in boards:
+		file.write(str(board))
+
+	file.write("Solved in " + str(len(boards)-1) + " steps.\n")
+
+	t = Timer(lambda: function)
+	file.write("Time took:" + str(t.timeit(number=1)))
 
 ##==========================================================================##
 #profilers
@@ -480,7 +489,7 @@ def board_1():
         print board
 
     print 'Opgelost in:', len(boards)-1, ' stappen.'
-
+    return boards
 
 def board_2():
     h = True
@@ -538,6 +547,7 @@ def board_2():
 
     print 'Opgelost in:', len(boards)-1, ' stappen.'
 
+    return boards
         
 def board_3():
     exitPos2 = (5,2)
@@ -590,6 +600,8 @@ def board_3():
         print board
 
     print 'Opgelost in:', len(boards)-1, ' stappen.'
+
+    return boards
 
 
 def board_4():
@@ -672,7 +684,7 @@ def board_4():
 #        print board
 #
 #    print 'Opgelost in:', len(boards)-1, ' stappen.'
-    return boards, len(boards)-1 
+    return boards
 
 def testMoveCarInParking():             
     exitPos1 = (5,2)
@@ -693,14 +705,18 @@ def testMoveCarInParking():
 
     print 'Opgelost in:', len(boards)-1, ' stappen.'
 
+    return boards
 
 
 if __name__ == '__main__':
-    #board_3()
-    #testMoveCarInParking()
+	saveResults(board_3(), "board_3")
 
-    t = Timer(lambda: board_3())
-    print t.timeit(number=1)
+# if __name__ == '__main__':
+#     #board_3()
+#     #testMoveCarInParking()
+
+#     t = Timer(lambda: board_3())
+#     print t.timeit(number=1)
 
 
     # with PyCallGraph(output=GraphvizOutput()):
