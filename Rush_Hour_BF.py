@@ -343,8 +343,9 @@ class Parking(object):
 def saveResults(function, fileName):
 	"""
 	Creates text file with the solution to a board described in the argument 
-	function. saveResults will overwrite the previously made file if fileName
-	is not changed. 
+	function. The solution is written to the text file as boards, as coded in 
+	__str__ of the class board. saveResults will overwrite the previously made 
+	file if fileName is not changed. 
 	
 	@function: Function that returns the solution to a board as a list of boards.
 	@fileName: Name of the result file. The version of the code that was used 
