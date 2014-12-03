@@ -2,7 +2,7 @@
 
 import Tkinter as tk
 import Rush_Hour_BF as rh
-#import testsimulatie as tst
+#voor testsimulatie gebruik rh.testMoveCarInParking()
 import time
 
 class App:
@@ -59,6 +59,7 @@ class App:
         gotoButton = tk.Button(buttonframe, text = 'Go to step',\
             command = self.gotoStep)
         gotoButton.grid(row = 2, column = 4)
+
 
     def createStepList(self, child):
         '''
@@ -273,4 +274,4 @@ def runApp(parking):
     root.destroy()
 
 
-runApp(rh.board_3())
+runApp(rh.board_4()[-1])

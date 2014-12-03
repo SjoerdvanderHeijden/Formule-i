@@ -340,20 +340,20 @@ class Parking(object):
         return output
         
 ##==========================================================================##
-def saveResults(name, output):
-"""
-Create text file with results
-@name: string
-@output: List of boards, solution of simulation
-"""
-    name = name+".txt"
+# def saveResults(name, output):
+#     """
+#     Create text file with results
+#     @name: string
+#     @output: List of boards, solution of simulation
+#     """
+#     name = name+".txt"
     
-    try: 
-        file = open(name,'r+')
-        raise ValueError("File already exists.")
-    except:
-        file = open(name, 'w')
-        file.write(output simulation as string)
+#     try: 
+#         file = open(name,'r+')
+#         raise ValueError("File already exists.")
+#     except:
+#         file = open(name, 'w')
+#         file.write(output simulation as string)
 
 ##==========================================================================##
 #profilers
@@ -368,6 +368,8 @@ def BreadthFirstSimulation(parking):
     
     x = 0
     y = 0
+
+    length = max(parking.width, parking.height)-2
 
     q = Queue.Queue()
     q.put(parking)
@@ -397,14 +399,14 @@ def BreadthFirstSimulation(parking):
 
                         ##### more tiles is 1 step: #####
 
-                        for move in xrange(-1,-5,-1):
+                        for move in xrange(-1,-length,-1):
                             try:
                                 q.put(currentParking.moveCarInParking((x,y,),\
                                                                         move))
                             except ValueError:
                                 break
 
-                        for move in xrange(1,5):
+                        for move in xrange(1,length):
                             try:
                                 q.put(currentParking.moveCarInParking((x,y,),\
                                                                         move))
@@ -476,10 +478,12 @@ def board_1():
 
     boards = BreadthFirstSimulation(parking1)
 
-    for board in boards:
-        print board
+    return boards
 
-    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    # for board in boards:
+    #     print board
+
+    # print 'Opgelost in:', len(boards)-1, ' stappen.'
 
 
 def board_2():
@@ -533,10 +537,12 @@ def board_2():
 
     boards = BreadthFirstSimulation(parking1)
 
-    for board in boards:
-        print board
+    return boards
 
-    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    # for board in boards:
+    #     print board
+
+    # print 'Opgelost in:', len(boards)-1, ' stappen.'
 
         
 def board_3():
@@ -586,10 +592,12 @@ def board_3():
 
     boards = BreadthFirstSimulation(parking1)
 
-    for board in boards:
-        print board
+    return boards
 
-    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    # for board in boards:
+    #     print board
+
+    # print 'Opgelost in:', len(boards)-1, ' stappen.'
 
 
 def board_4():
@@ -599,80 +607,84 @@ def board_4():
     exitPos1 = (8,4)
     parking1 = Parking(9,9,exitPos1)
 
+    global cars
+    cars = [None]
     
-    rood = RedCar(2,h)
-    parking1.addCar(rood,(1,4))
+    cars.append(RedCar(2,h))
+    parking1.addCar(cars[-1],(1,4))
     
-    groen = Car(2,v)
-    parking1.addCar(groen,(0,0))
+    cars.append(Car(2,v))
+    parking1.addCar(cars[-1],(0,0))
     
-    vracht = Car(3,h)
-    parking1.addCar(vracht,(1,0))
+    cars.append(Car(3,h))
+    parking1.addCar(cars[-1],(1,0))
     
-    vracht2 = Car(3,v)
-    parking1.addCar(vracht2, (5,0))
+    cars.append(Car(3,v))
+    parking1.addCar(cars[-1], (5,0))
     
-    vracht3 = Car(3,v)
-    parking1.addCar(vracht3, (3,1))
+    cars.append(Car(3,v))
+    parking1.addCar(cars[-1], (3,1))
     
-    vracht4 = Car(3,h)
-    parking1.addCar(vracht4, (6,1))
+    cars.append(Car(3,h))
+    parking1.addCar(cars[-1], (6,1))
     
-    vracht5= Car(3,v)
-    parking1.addCar(vracht5,(8,2))
+    cars.append(Car(3,v))
+    parking1.addCar(cars[-1],(8,2))
     
-    blauw = Car(2,h)
-    parking1.addCar(blauw, (0,3))
+    cars.append(Car(2,h))
+    parking1.addCar(cars[-1], (0,3))
     
-    vracht6 = Car(3,h)
-    parking1.addCar(vracht6, (5,3))
+    cars.append(Car(3,h))
+    parking1.addCar(cars[-1], (5,3))
     
-    cyan = Car(2,v)
-    parking1.addCar(cyan,(0,4))
+    cars.append(Car(2,v))
+    parking1.addCar(cars[-1],(0,4))
     
-    groen2 = Car(2,v)
-    parking1.addCar(groen2,(3,4))
+    cars.append(Car(2,v))
+    parking1.addCar(cars[-1],(3,4))
     
-    vracht7 = Car(3,v)
-    parking1.addCar(vracht7, (2,5))
+    cars.append(Car(3,v))
+    parking1.addCar(cars[-1], (2,5))
     
-    vracht8 = Car(3,h)
-    parking1.addCar(vracht8, (5,6))
+    cars.append(Car(3,h))
+    parking1.addCar(cars[-1], (5,5))
     
-    vracht9 = Car(3,v)
-    parking1.addCar(vracht9, (8,6))
+    cars.append(Car(3,v))
+    parking1.addCar(cars[-1], (8,5))
     
-    oranje = Car(2,h)
-    parking1.addCar(oranje, (0,6))
+    cars.append(Car(2,h))
+    parking1.addCar(cars[-1], (0,6))
     
-    blauw2 = Car(2,v)
-    parking1.addCar(blauw2, (3,6))
+    cars.append(Car(2,v))
+    parking1.addCar(cars[-1], (3,6))
+  
+    cars.append(Car(2,h))
+    parking1.addCar(cars[-1], (4,6))
     
-    groen3 = Car(2,h)
-    parking1.addCar(groen3, (4,6))
+    cars.append(Car(2,v))
+    parking1.addCar(cars[-1], (0,7))
     
-    blauw3 = Car(2,v)
-    parking1.addCar(blauw3, (0,7))
+    cars.append(Car(2,v))
+    parking1.addCar(cars[-1],(4,7))
     
-    oranje2 = Car(2,v)
-    parking1.addCar(oranje2,(4,7))
+    cars.append(Car(3,h))
+    parking1.addCar(cars[-1], (1,8))
     
-    vracht10 = Car(2,h)
-    parking1.addCar(vracht10, (1,8))
+    cars.append(Car(2,h))
+    parking1.addCar(cars[-1], (5,8))
     
-    cyan2 = Car(2,h)
-    parking1.addCar(cyan2, (5,8))
-    
-    groen4 = Car(2,h)
-    parking1.addCar(groen4, (7,8))
+    cars.append(Car(2,h))
+    parking1.addCar(cars[-1], (7,8))
 
     boards = BreadthFirstSimulation(parking1)
 
- #   for board in boards:
-#        print board
-#
-#    print 'Opgelost in:', len(boards)-1, ' stappen.'
-    return boards, len(boards)-1 
+    # return boards
+
+    for board in boards:
+        print board
+
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    
 
 def testMoveCarInParking():             
     exitPos1 = (5,2)
@@ -688,10 +700,12 @@ def testMoveCarInParking():
 
     boards = BreadthFirstSimulation(parking1)
 
-    for board in boards:
-        print board
+    return boards
 
-    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    # for board in boards:
+    #     print board
+
+    # print 'Opgelost in:', len(boards)-1, ' stappen.'
 
 
 
@@ -699,7 +713,7 @@ if __name__ == '__main__':
     #board_3()
     #testMoveCarInParking()
 
-    t = Timer(lambda: board_3())
+    t = Timer(lambda: board_4())
     print t.timeit(number=1)
 
 
