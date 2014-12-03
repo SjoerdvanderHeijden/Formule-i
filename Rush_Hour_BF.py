@@ -8,7 +8,7 @@ from timeit import Timer
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V1a"
+version = "V2a"
 
 class Car(object):
     """
@@ -153,8 +153,6 @@ class Parking(object):
         car = self.occupiedBy(upperLeftCoord)
         startPos = car.getPos(upperLeftCoord)
 
-        # debugging
-        #print "hi", distance, upperLeftCoord, car.getName()
         if distance == 0:
             raise ValueError("0")
                 
@@ -189,10 +187,9 @@ class Parking(object):
 
             # Makes a copy of the current parking. The new position of the car will 
             # be stored in this copy 
-            newParking = copy.copy(self)#copy.deepcopy(self)
+            newParking = copy.copy(self)
             newParking.setParent(self)  
 
-            ## Attention!! Road work ahead!!!!! ################################################
             y = upperLeftCoord[1]
             tempList = list(newParking.parkList)
 
@@ -227,9 +224,6 @@ class Parking(object):
                     raise ValueError("Car out of parking range!")
 
             newParking.parkList = tuple(tempList)
-
-            # newParking.clearTiles(car, startPos[0])
-            # newParking.addCar(car, (startPos[0][0]+distance,startPos[0][1]) )
             
 
 
@@ -262,7 +256,6 @@ class Parking(object):
             newParking.setParent(self)  
 
 
-            ## Attention!! Road work ahead!!!!! ################################################
             x = upperLeftCoord[0]
             tempList = list(newParking.parkList)
             tempCol = list(tempList[x])
@@ -296,9 +289,6 @@ class Parking(object):
             tempList[x] = tuple(tempCol)
             newParking.parkList = tuple(tempList)
 
-            # newParking.clearTiles(car, startPos[0])
-            # newParking.addCar(car, (startPos[0][0],startPos[0][1]+distance) )
-
                 
         return newParking
 
@@ -314,8 +304,7 @@ class Parking(object):
         output = ''
 
         exitRow = self.exitPos[1]
-
-                   
+        
         for y in xrange(self.height):
             output += ' '
             for x in xrange(self.width):
@@ -340,20 +329,31 @@ class Parking(object):
         return output
         
 ##==========================================================================##
-# def saveResults(name, output):
-#     """
-#     Create text file with results
-#     @name: string
-#     @output: List of boards, solution of simulation
-#     """
-#     name = name+".txt"
-    
-#     try: 
-#         file = open(name,'r+')
-#         raise ValueError("File already exists.")
-#     except:
-#         file = open(name, 'w')
-#         file.write(output simulation as string)
+
+def saveResults(function, fileName):
+	"""
+	Creates text file with the solution to a board described in the argument 
+	function. The solution is written to the text file as boards, as coded in 
+	__str__ of the class board. saveResults will overwrite the previously made 
+	file if fileName is not changed. 
+	
+	@function: Function that returns the solution to a board as a list of boards.
+	@fileName: Name of the result file. The version of the code that was used 
+	to obtain the solution will automatically be added to the name of the 
+	file (string)
+	"""
+	name = str(fileName + "_" + version + ".txt")
+
+	file = open(name, 'w')
+
+	boards = function
+	for board in boards:
+		file.write(str(board))
+
+	file.write("Solved in " + str(len(boards)-1) + " steps.\n")
+
+	t = Timer(lambda: function)
+	file.write("Time took:" + str(t.timeit(number=1)))
 
 ##==========================================================================##
 #profilers
@@ -478,13 +478,13 @@ def board_1():
 
     boards = BreadthFirstSimulation(parking1)
 
-    return boards
 
     # for board in boards:
     #     print board
 
     # print 'Opgelost in:', len(boards)-1, ' stappen.'
 
+    return boards
 
 def board_2():
     h = True
@@ -537,14 +537,15 @@ def board_2():
 
     boards = BreadthFirstSimulation(parking1)
 
-    return boards
 
     # for board in boards:
     #     print board
 
     # print 'Opgelost in:', len(boards)-1, ' stappen.'
 
+    return boards
         
+
 def board_3():
     exitPos2 = (5,2)
     parking1 = Parking(6,6,exitPos2)
@@ -592,12 +593,13 @@ def board_3():
 
     boards = BreadthFirstSimulation(parking1)
 
-    return boards
 
     # for board in boards:
     #     print board
 
     # print 'Opgelost in:', len(boards)-1, ' stappen.'
+
+    return boards
 
 
 def board_4():
@@ -678,13 +680,12 @@ def board_4():
 
     boards = BreadthFirstSimulation(parking1)
 
-    # return boards
+ #   for board in boards:
+#        print board
+#
+#    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    return boards
 
-    for board in boards:
-        print board
-
-    print 'Opgelost in:', len(boards)-1, ' stappen.'
-    
 
 def testMoveCarInParking():             
     exitPos1 = (5,2)
@@ -700,191 +701,24 @@ def testMoveCarInParking():
 
     boards = BreadthFirstSimulation(parking1)
 
-    return boards
-
     # for board in boards:
     #     print board
 
     # print 'Opgelost in:', len(boards)-1, ' stappen.'
 
+    return boards
 
 
 if __name__ == '__main__':
-    #board_3()
-    #testMoveCarInParking()
+	# saveResults(board_3(), "board_3")
+
+    # board_3()
+    # testMoveCarInParking()
 
     t = Timer(lambda: board_4())
     print t.timeit(number=1)
 
-
     # with PyCallGraph(output=GraphvizOutput()):
     #     board_3()
 
-#if __name__ == '__main__':
-#    # Game #2
-#    h = True
-#    v = False
-#    
-#    exitPos1 = (5,2)
-#    parking1 = Parking(6,6,exitPos1)
-#    
-#    rood = RedCar(2,h)
-#    parking1.addCar(rood,(2,2))
-#    
-#    blauw = Car(2, h)
-#    parking1.addCar(blauw, (2,0))
-#    
-#    oranje = Car(2, h)
-#    parking1.addCar(oranje, (4,0))
-#    
-#    oranje2 = Car(2,h)
-#    parking1.addCar(oranje2, (1,1))
-#    
-#    groen = Car(2, h)
-#    parking1.addCar(groen, (3,1))
-#    
-#    groen2 = Car(2, h)
-#    parking1.addCar(groen2, (0, 3))
-#    
-#    blauw2 = Car(2, h)
-#    parking1.addCar(blauw2, (2,3))
-#    
-#    groen3 = Car(2, h)
-#    parking1.addCar(groen3, (4,4))
-#    
-#    oranje3 = Car(2,h)
-#    parking1.addCar(oranje3, (4,5))
-#    
-#    oranje4 = Car(2,v)
-#    parking1.addCar(oranje4, (0,4))
-#    
-#    cyan = Car(2,v)
-#    parking1.addCar(cyan, (4,2))
-#    
-#    cyan2 = Car(2,v)
-#    parking1.addCar(cyan2, (3,4))
-#    
-#    vracht = Car(3,v)
-#    parking1.addCar(vracht, (5,1))
-#    
-#
-#if __name__ == '__main__':
-#    # Game #3
-#    h = True
-#    v = False
-#    
-#    exitPos1 = (5,2)
-#    parking1 = Parking(6,6,exitPos1)
-#    
-#    rood = RedCar(2,h)
-#    parking1.addCar(rood,(0,2))
-#    
-#    blauw = Car(2, h)
-#    parking1.addCar(blauw, (1,0))
-#    
-#    oranje = Car(2,h)
-#    parking1.addCar(oranje,(1,1))
-#    
-#    groen = Car(2,h)
-#    parking1.addCar(groen, (4,1))
-#    
-#    groen2 = Car(2,h)
-#    parking1.addCar(groen2,(0,3))
-#    
-#    blauw2 = Car(2,h)
-#    parking1.addCar(blauw2, (3,3))
-#    
-#    groen3 = Car(2,h)
-#    parking1.addCar(groen3, (4,4))
-#    
-#    blauw3 = Car(2,v)
-#    parking1.addCar(blauw3, (3,1))
-#    
-#    cyan = Car(2,v)
-#    parking1.addCar(cyan, (2,2))
-#    
-#    cyan2 = Car(2,v)
-#    parking1.addCar(cyan2,(5,2))
-#    
-#    oranje2 = Car(2,v)
-#    parking1.addCar(oranje2, (0,4))
-#    
-#    groen3 = Car(2,v)
-#    parking1.addCar(groen3,(2,4))
-#    
-#    vracht = Car(3,h)
-#    parking1.addCar(vracht,(3,0))
-#
-#if __name__ == '__main__':
-#    # Game #4
-#    h = True
-#    v = False
-#    
-#    exitPos1 = (8,4)
-#    parking1 = Parking(9,9,exitPos1)
-#    
-#    rood = RedCar(2,h)
-#    parking1.addCar(rood,(1,4))
-#    
-#    groen = Car(2,v)
-#    parking1.addCar(groen,(0,0))
-#    
-#    vracht = Car(3,h)
-#    parking1.addCar(vracht,(1,0))
-#    
-#    vracht2 = Car(3,v)
-#    parking1.addCar(vracht2, (5,0))
-#    
-#    vracht3 = Car(3,v)
-#    parking1.addCar(vracht3, (3,1))
-#    
-#    vracht4 = Car(3,h)
-#    parking1.addCar(vracht4, (6,1))
-#    
-#    vracht5= Car(3,v)
-#    parking1.addCar(vracht5,(8,2))
-#    
-#    blauw = Car(2,h)
-#    parking1.addCar(blauw, (0,3))
-#    
-#    vracht6 = Car(3,h)
-#    parking1.addCar(vracht6, (5,3))
-#    
-#    cyan = Car(2,v)
-#    parking1.addCar(cyan,(0,4))
-#    
-#    groen2 = Car(2,v)
-#    parking1.addCar(groen2,(3,4))
-#    
-#    vracht7 = Car(3,v)
-#    parking1.addCar(vracht7, (2,5))
-#    
-#    vracht8 = Car(3,h)
-#    parking1.addCar(vracht8, (5,6))
-#    
-#    vracht9 = Car(3,v)
-#    parking1.addCar(vracht9, (8,6))
-#    
-#    oranje = Car(2,h)
-#    parking1.addCar(oranje, (0,6))
-#    
-#    blauw2 = Car(2,v)
-#    parking1.addCar(blauw2, (3,6))
-#    
-#    groen3 = Car(2,h)
-#    parking1.addCar(groen3, (4,6))
-#    
-#    blauw3 = Car(2,v)
-#    parking1.addCar(blauw3, (0,7))
-#    
-#    oranje2 = Car(2,v)
-#    parking1.addCar(oranje2,(4,7))
-#    
-#    vracht10 = Car(2,h)
-#    parking1.addCar(vracht10, (1,8))
-#    
-#    cyan2 = Car(2,h)
-#    parking1.addCar(cyan2, (5,8))
-#    
-#    groen4 = Car(2,h)
-#    parking1.addCar(groen4, (7,8))
+
