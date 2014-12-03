@@ -326,6 +326,9 @@ class Parking(object):
 
         return output
         
+def priorityqueuesimulation():
+	# https://docs.python.org/2/library/heapq.html#module-heapq
+        
 ##==========================================================================##
 
 def saveResults(function, fileName):
