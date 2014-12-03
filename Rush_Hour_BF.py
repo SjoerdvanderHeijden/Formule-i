@@ -6,7 +6,7 @@ import math, copy, Queue,time
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V2a"
+version = "V2b"
 
 class Car(object):
     """
@@ -353,7 +353,7 @@ def saveResults(function, fileName):
 
     file.write("Solved in " + str(len(boards)-1) + " steps.\n")
 
-    file.write("Time took:" + str(stop-start))
+    file.write("Solved in " + str(stop-start) + "seconds.")
 
 ##==========================================================================##
 #profilers
