@@ -274,4 +274,4 @@ def runApp(parking):
     root.destroy()
 
 
-runApp(rh.board_4()[-1])
+runApp(rh.board_1()[-1])

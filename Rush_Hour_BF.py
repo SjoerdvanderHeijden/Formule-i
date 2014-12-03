@@ -1,9 +1,7 @@
 # Rush Hour.py
 # Contributors: Patrick Schilder, Sjoerd van der Heijden and Alix Dodu
 
-import math, copy, Queue
-
-from timeit import Timer
+import math, copy, Queue,time
 
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
@@ -331,29 +329,31 @@ class Parking(object):
 ##==========================================================================##
 
 def saveResults(function, fileName):
-	"""
-	Creates text file with the solution to a board described in the argument 
-	function. The solution is written to the text file as boards, as coded in 
-	__str__ of the class board. saveResults will overwrite the previously made 
-	file if fileName is not changed. 
-	
-	@function: Function that returns the solution to a board as a list of boards.
-	@fileName: Name of the result file. The version of the code that was used 
-	to obtain the solution will automatically be added to the name of the 
-	file (string)
-	"""
-	name = str(fileName + "_" + version + ".txt")
+    """
+    Creates text file with the solution to a board described in the argument 
+    function. The solution is written to the text file as boards, as coded in 
+    __str__ of the class board. saveResults will overwrite the previously made 
+    file if fileName is not changed. 
 
-	file = open(name, 'w')
+    @function: Function that returns the solution to a board as a list of boards.
+    @fileName: Name of the result file. The version of the code that was used 
+    to obtain the solution will automatically be added to the name of the 
+    file (string)
+    """
+    name = str(fileName + "_" + version + ".txt")
 
-	boards = function
-	for board in boards:
-		file.write(str(board))
+    file = open(name, 'w')
 
-	file.write("Solved in " + str(len(boards)-1) + " steps.\n")
+    start = time.time()
+    boards = function()
+    stop = time.time()
 
-	t = Timer(lambda: function)
-	file.write("Time took:" + str(t.timeit(number=1)))
+    for board in boards:
+    	file.write(str(board))
+
+    file.write("Solved in " + str(len(boards)-1) + " steps.\n")
+
+    file.write("Time took:" + str(stop-start))
 
 ##==========================================================================##
 #profilers
@@ -369,7 +369,7 @@ def BreadthFirstSimulation(parking):
     x = 0
     y = 0
 
-    length = max(parking.width, parking.height)-2
+    length = max(parking.width, parking.height)-1
 
     q = Queue.Queue()
     q.put(parking)
@@ -710,13 +710,22 @@ def testMoveCarInParking():
 
 
 if __name__ == '__main__':
-	# saveResults(board_3(), "board_3")
+	saveResults(board_3, "board_3")
+
+    ##------------------------------------------
 
     # board_3()
     # testMoveCarInParking()
 
-    t = Timer(lambda: board_4())
-    print t.timeit(number=1)
+    ##------------------------------------------
+
+    # start = time.time()
+    # board_3()
+    # stop = time.time()
+
+    # print stop-start
+
+    ##------------------------------------------
 
     # with PyCallGraph(output=GraphvizOutput()):
     #     board_3()
