@@ -306,20 +306,18 @@ class Parking(object):
         for y in xrange(self.height):
             output += ' '
             for x in xrange(self.width):
-                if input_data[x][y] > 1:
+                if input_data[x][y] > 0:
                     if input_data[x][y] > 9:
                         output += str(input_data[x][y]) + ' '
                     else:
                         output += str(input_data[x][y]) + '  '
                 elif input_data[x][y] == None:
                     output += '.  '
-                elif input_data[x][y] == 1:
-                    output += 'R  '
                 else:
                     output += '#  '
 
-            if y == exitRow:
-                output += '<--'
+            # if y == exitRow:
+            #     output += '<--'
             output += '\n'
 
         output += '\n'
@@ -348,12 +346,15 @@ def saveResults(function, fileName):
     boards = function()
     stop = time.time()
 
+    file.write("Solved in " + str(len(boards)-1) + " steps.\n")
+
+    file.write("Time took: " + str(stop-start)+"\n")
+
+    file.write("Exit coordinate: "+ str(boards[0].exitPos)+"\n\n")
+
     for board in boards:
     	file.write(str(board))
 
-    file.write("Solved in " + str(len(boards)-1) + " steps.\n")
-
-    file.write("Time took:" + str(stop-start))
 
 ##==========================================================================##
 #profilers
