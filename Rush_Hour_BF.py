@@ -324,7 +324,7 @@ class Parking(object):
 
         return output
         
-def priorityqueuesimulation():
+#def priorityqueuesimulation():
 	# https://docs.python.org/2/library/heapq.html#module-heapq
         
 ##==========================================================================##

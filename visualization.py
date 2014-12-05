@@ -33,10 +33,10 @@ class App:
         quitbutton.grid(row = 2, column = 0)
 
         prevStep = tk.Button(buttonframe, text="<<",\
-        command=self.oneStepBack)
+        command=self.buttonStepBack)
         prevStep.grid(row = 1, column = 0)
         
-        nextStep = tk.Button(buttonframe, text=">>", command=self.oneStep)
+        nextStep = tk.Button(buttonframe, text=">>",command=self.buttonStep)
         nextStep.grid(row = 1, column = 2)
         
         run = tk.Button(buttonframe, text="Run", command=self.run)
@@ -203,7 +203,10 @@ class App:
             for i in xrange(-diff):
                 self.oneStepBack()
         self.delay = .03
-            
+    
+    def buttonStep(self):
+        self.stop = True
+        self.oneStep()
     def oneStep(self):
         '''
         Animates a single step taken to solve the Rush Hour puzzle. The current
@@ -233,7 +236,10 @@ class App:
                 time.sleep(self.delay)
                 self.canvas.move('car'+str(move[0]), 0, dy*5)
                 self.canvas.update()
-
+                
+    def buttonStepBack(self):
+        self.stop = True
+        self.oneStepBack()
     def oneStepBack(self):
         '''
         Animates a single step back 'towards' solving the Rush Hour puzzle.
@@ -274,4 +280,4 @@ def runApp(parking):
     root.destroy()
 
 
-runApp(rh.board_1()[-1])
+runApp(rh.board_3()[-1])
