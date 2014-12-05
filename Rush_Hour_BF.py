@@ -6,7 +6,7 @@ import math, copy, Queue,time
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V2a"
+version = "V2b"
 
 class Car(object):
     """
@@ -324,6 +324,9 @@ class Parking(object):
 
         return output
         
+def priorityqueuesimulation():
+	# https://docs.python.org/2/library/heapq.html#module-heapq
+        
 ##==========================================================================##
 
 def saveResults(function, fileName):
@@ -348,9 +351,9 @@ def saveResults(function, fileName):
 
     file.write("Solved in " + str(len(boards)-1) + " steps.\n")
 
-    file.write("Time took: " + str(stop-start)+"\n")
+    file.write("Time took: " + str(stop-start) + "seconds." + "\n")
 
-    file.write("Exit coordinate: "+ str(boards[0].exitPos)+"\n\n")
+    file.write("Exit coordinate: "+ str(boards[0].exitPos) + "\n\n")
 
     for board in boards:
     	file.write(str(board))
