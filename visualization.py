@@ -7,15 +7,23 @@ import time
 
 class App:
 
-    def __init__(self, master, parking):
+    def __init__(self, master, setOrFilename):
         '''
         Initializes the Tkinter application, places button widgets, calls
         a function for drawing and placing the initial Rush Hour parking in the
         app and calls a function that generates several handy instance
         attributes.
         
-        takes the final, solved Parking instance of the puzzle.
+        takes a list of all of the boards from beginning to the end.
         '''
+        
+        if isinstance(setOrFilename, str):
+            parkings = self.makeSet(setOrFilename)
+        else:
+            parkings = setOrFilename            
+            for i in xrange(len(parkings)):
+                parkings[i] = parkings[i].getParking()
+        
         buttonframe = tk.Frame(master)
         buttonframe.grid(row = 2)
         
@@ -23,8 +31,8 @@ class App:
         self.canvasframe.grid(row = 0)
         
         self.step = 0
-        self.createStepList(parking)
-        self.drawBeginParking()
+        self.createStepList(parkings)
+        self.drawBeginParking(parkings)
         self.delay = .03
 
         quitbutton = tk.Button(
@@ -60,24 +68,55 @@ class App:
             command = self.gotoStep)
         gotoButton.grid(row = 2, column = 4)
 
-
-    def createStepList(self, child):
+    def makeSet(self, setOrFilename):
+        textfile = open(setOrFilename)
+        textfile.next()
+        textfile.next()
+        textfile.next()
+        x = int(textfile.next())
+        y = int(textfile.next())
+        self.exitpos = (x,y)
+        parkings = []
+        parking = []
+        parkingrow = []
+        
+        for line in textfile:
+            parkingrow = []
+            if line != '\n':
+                templine = line.split(' ')
+                line = []
+                for entry in templine:
+                    if entry != '':
+                        line.append(entry)
+                for entry in line[:-1]:
+                    try:
+                        parkingrow.append(int(entry))
+                    except:
+                        parkingrow.append(None)
+                        
+                parking.append(parkingrow)
+            else:
+                parkings.append(parking)
+                parking = []
+                
+        return parkings
+            
+        
+    
+    def createStepList(self, parkings):
         '''
         Generates a list containing all steps done to complete the puzzle in
         the form [car x, coordinates before move, coordinates after move], from
         start to end. Also finds and denotes the initial Parking instance.
         
-        takes the final Parking instance of the Rush Hour puzzle
+        takes a list of all of the boards from beginning to end.
         
         returns: nothing, but saves its creations as instance attributes.
         '''
-        parent = child.getParent()
-        steplist = []
-        
-        while parent != None:
-            
-            childParking = child.getParking()
-            parentParking = parent.getParking()
+        self.steplist = []
+        for i in xrange(len(parkings)-1):
+            childParking = parkings[i]
+            parentParking = parkings[i+1]
             
             stop = False
             cfound = False
@@ -113,16 +152,11 @@ class App:
                             stop = True
                             break
                         
-            steplist.append([car, oldcoord, newcoord])
-            
-            child = parent
-            parent = child.getParent()
-            
-        self.steplist = steplist[::-1]
+            self.steplist.append([car, newcoord, oldcoord])
+        
         self.steplist += [[1,[0,0],[1,0]]]
-        self.beginParking = child            
             
-    def drawBeginParking(self):
+    def drawBeginParking(self, parkings):
         '''
         Uses the parking instance 'beginParking', the initial parking of the
         puzzle, draws a grid of the appropriate size and places the cars as
@@ -130,9 +164,9 @@ class App:
         
         takes and returns nothing, but draws the visualization.
         '''
-        parkingInst = self.beginParking
+        parking = parkings[0]
         
-        size = len(parkingInst.getParking())*50+1
+        size = len(parking)*50+1
         
         self.canvas = tk.Canvas(self.canvasframe, width = size,\
             height = size, bg="white")
@@ -141,24 +175,27 @@ class App:
                 self.canvas.create_line(y, 1, y, size+2)
                 self.canvas.create_line(2, x, size+2, x)
         
-        parking = parkingInst.getParking()
-        
         placedcars = set()        
         for row in xrange(len(parking)):
             for column in xrange(len(parking[0])):
                 
                 car = parking[row][column]
-                if car in placedcars:
-                    continue   
-                
-                try:
-                    # generates error if not a car on position (column, row).
-                    carInst = parkingInst.occupiedBy((row,column))
-                    coords = carInst.getPos((row,column))
-                    placedcars.add(car)
-                    
-                except:
+                if car in placedcars or car == None:
                     continue
+                
+#                try:
+                    # generates error if not a car on position (column, row).
+#                carInst = parkingInst.occupiedBy((row,column))
+                coords = []
+                for xrow in xrange(len(parking)):
+                    for xcolumn in xrange(len(parking[0])):
+                        if parking[xrow][xcolumn] == car:
+                            coords.append((xrow,xcolumn))
+#                coords = carInst.getPos((row,column))
+                placedcars.add(car)
+                    
+#                except:
+#                    continue
                 
                 if car == 1:
                     self.canvas.create_rectangle(coords[0][0]*50+5,\
@@ -170,7 +207,6 @@ class App:
                     coords[0][1]*50+5, coords[-1][0]*50+49,\
                     coords[-1][1]*50+49, fill = 'blue',\
                     tag = 'car'+str(car))
-                
         self.canvas.grid(row = 0)#, columnspan = 2)
         
     def stopRun(self):
@@ -209,8 +245,8 @@ class App:
         self.oneStep()
     def oneStep(self):
         '''
-        Animates a single step taken to solve the Rush Hour puzzle. The current
-        step is remembered in self.step.
+        Animates a single step taken to solve the Rush Hour puzzle. The
+        current step is remembered in self.step.
         
         returns nothing, but updates the app.
         '''
@@ -221,7 +257,7 @@ class App:
             return
             
         self.step+=1
-        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)))        
+        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)-1))        
         
         dx = move[2][0]-move[1][0]
         dy = move[2][1]-move[1][1]
@@ -252,7 +288,7 @@ class App:
             return
             
         self.step-=1
-        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)))
+        self.stepdisplay.set(str(self.step)+'/'+str(len(self.steplist)-1))
         
         move = self.steplist[self.step]
         
@@ -280,4 +316,5 @@ def runApp(parking):
     root.destroy()
 
 
-runApp(rh.board_1()[-1])
+#runApp('board_3_V2b.txt')
+runApp(rh.board_3())

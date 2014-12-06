@@ -353,7 +353,8 @@ def saveResults(function, fileName):
 
     file.write("Time took: " + str(stop-start) + "seconds." + "\n")
 
-    file.write("Exit coordinate: "+ str(boards[0].exitPos) + "\n\n")
+    file.write("Exit coordinate: "+ '\n' + str(boards[0].exitPos[0])\
+    + "\n"+ str(boards[0].exitPos[1])+"\n")
 
     for board in boards:
     	file.write(str(board))
