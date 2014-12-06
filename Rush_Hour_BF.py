@@ -1,7 +1,7 @@
 # Rush Hour.py
 # Contributors: Patrick Schilder, Sjoerd van der Heijden and Alix Dodu
 
-import math, copy, Queue,time
+import math, copy, Queue, time
 
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
@@ -47,16 +47,21 @@ class Car(object):
         
         return: list of tuples corresponding to all the coordinates of the car
         """ 
+        # start = time.time()
+        # global getpostime
+
         coordinates = [upperLeftCoord]
         
         # For every "piece" of the car, adds a tuple to the list coordinates, corresponding to the coordinates of that
         # piece.
         for n in range(1,self.length):
-            if self.horizontal == True:
+            if self.horizontal:
                 coordinates.append((upperLeftCoord[0]+n, upperLeftCoord[1]))
             else:
                 coordinates.append((upperLeftCoord[0],upperLeftCoord[1]+n))
         
+        # getpostime += time.time() - start
+
         return coordinates
     
 class RedCar(Car):
@@ -153,6 +158,10 @@ class Parking(object):
 
         if distance == 0:
             raise ValueError("0")
+
+        # global horizontaltime
+        # global verticaltime
+        # start = time.time()
                 
         if car.isHorizontal():
             #print car.getName(), "is horizontal"
@@ -222,6 +231,8 @@ class Parking(object):
                     raise ValueError("Car out of parking range!")
 
             newParking.parkList = tuple(tempList)
+
+            # horizontaltime += time.time() - start
             
 
 
@@ -287,6 +298,8 @@ class Parking(object):
             tempList[x] = tuple(tempCol)
             newParking.parkList = tuple(tempList)
 
+            # verticaltime += time.time() - start
+
                 
         return newParking
 
@@ -325,7 +338,7 @@ class Parking(object):
         return output
         
 #def priorityqueuesimulation():
-	# https://docs.python.org/2/library/heapq.html#module-heapq
+    # https://docs.python.org/2/library/heapq.html#module-heapq
         
 ##==========================================================================##
 
@@ -357,7 +370,7 @@ def saveResults(function, fileName):
     + "\n"+ str(boards[0].exitPos[1])+"\n")
 
     for board in boards:
-    	file.write(str(board))
+        file.write(str(board))
 
 
 ##==========================================================================##
@@ -692,6 +705,99 @@ def board_4():
     return boards
 
 
+
+def board_5():
+    h = True
+    v = False
+
+    exitPos5 = (8,4)
+    parking5 = Parking(9,9,exitPos5)
+
+    global cars
+    cars = [None]
+
+    cars.append(RedCar(2,h))
+    parking5.addCar(cars[-1],(6,4))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(7,1))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(4,2))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(4,3))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(7,3))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(3,6))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(6,6))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(2,7))
+
+    cars.append(Car(2,h))
+    parking5.addCar(cars[-1],(2,8))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(5,0))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(6,0))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(6,2))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(0,5))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(2,5))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(0,7))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(1,7))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(4,7))
+
+    cars.append(Car(2,v))
+    parking5.addCar(cars[-1],(8,7))
+
+    cars.append(Car(3,h))
+    parking5.addCar(cars[-1],(0,0))
+
+    cars.append(Car(3,h))
+    parking5.addCar(cars[-1],(2,4))
+
+    cars.append(Car(3,h))
+    parking5.addCar(cars[-1],(5,7))
+
+    cars.append(Car(3,v))
+    parking5.addCar(cars[-1],(3,0))
+
+    cars.append(Car(3,v))
+    parking5.addCar(cars[-1],(5,4))
+
+    cars.append(Car(3,v))
+    parking5.addCar(cars[-1],(8,4))
+
+
+    boards = BreadthFirstSimulation(parking5)
+
+ #   for board in boards:
+#        print board
+#
+#    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    return boards
+
+
 def testMoveCarInParking():             
     exitPos1 = (5,2)
     parking1 = Parking(6,6,exitPos1)
@@ -715,7 +821,7 @@ def testMoveCarInParking():
 
 
 if __name__ == '__main__':
-	saveResults(board_3, "board_3")
+    #saveResults(board_3, "board_3")
 
     ##------------------------------------------
 
@@ -724,11 +830,19 @@ if __name__ == '__main__':
 
     ##------------------------------------------
 
-    # start = time.time()
-    # board_3()
-    # stop = time.time()
 
-    # print stop-start
+    # horizontaltime = 0
+    # verticaltime = 0
+    # getpostime = 0
+
+    starttot = time.time()
+    board_3()
+    stoptot = time.time()
+
+    print "total time: ", stoptot-starttot
+    # print "horizontal: ", horizontaltime
+    # print "vertical: ", verticaltime
+    # print "getpos: ", getpostime
 
     ##------------------------------------------
 
