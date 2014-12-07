@@ -6,7 +6,7 @@ import math, copy, Queue, time
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V2b"
+version = "V2c"
 
 class Car(object):
     """
@@ -314,11 +314,38 @@ class Parking(object):
         input_data = self.parkList[:]
         output = ''
 
-        exitRow = self.exitPos[1]
+        # exitRow = self.exitPos[1]
         
         for y in xrange(self.height):
             output += ' '
             for x in xrange(self.width):
+                if input_data[x][y] > 0:
+                    if input_data[x][y] > 9:
+                        output += str(input_data[x][y]) + ' '
+                    else:
+                        output += str(input_data[x][y]) + '  '
+                elif input_data[x][y] == None:
+                    output += '.  '
+                else:
+                    output += '#  '
+
+            # if y == exitRow:
+            #     output += '<--'
+            output += '\n'
+
+        output += '\n'
+
+        return output
+
+    def printOutput(self):
+        input_data = self.parkList[:]
+        output = ''
+
+        # exitRow = self.exitPos[1]
+        
+        for x in xrange(self.width):
+            output += ' '
+            for y in xrange(self.height):
                 if input_data[x][y] > 0:
                     if input_data[x][y] > 9:
                         output += str(input_data[x][y]) + ' '
@@ -359,7 +386,7 @@ def saveResults(function, fileName):
     file = open(name, 'w')
 
     start = time.time()
-    boards = function()
+    boards = function
     stop = time.time()
 
     file.write("Solved in " + str(len(boards)-1) + " steps.\n")
@@ -369,9 +396,13 @@ def saveResults(function, fileName):
     file.write("Exit coordinate: "+ '\n' + str(boards[0].exitPos[0])\
     + "\n"+ str(boards[0].exitPos[1])+"\n")
 
-    for board in boards:
-        file.write(str(board))
+    # for board in boards:
+    #     file.write(str(board))
 
+    # file.write("----------------------- \n")
+
+    for board in boards:
+        file.write(board.printOutput())
 
 ##==========================================================================##
 #profilers
@@ -836,8 +867,10 @@ if __name__ == '__main__':
     # getpostime = 0
 
     starttot = time.time()
-    board_3()
+    boards = board_3()
     stoptot = time.time()
+
+    saveResults(boards, "board_3")
 
     print "total time: ", stoptot-starttot
     # print "horizontal: ", horizontaltime
