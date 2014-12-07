@@ -20,7 +20,8 @@ class App:
         if isinstance(setOrFilename, str):
             parkings = self.makeSet(setOrFilename)
         else:
-            parkings = setOrFilename            
+            parkings = setOrFilename
+            self.exitpos = parkings[0].getExit()
             for i in xrange(len(parkings)):
                 parkings[i] = parkings[i].getParking()
         
@@ -322,5 +323,5 @@ def runApp(parking):
     root.destroy()
 
 
-runApp('board_3_V2b.txt')
-#runApp(rh.board_3())
+#runApp('board_3_V2b.txt')
+runApp(rh.board_3())
