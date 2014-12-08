@@ -37,7 +37,12 @@ class Car(object):
     def isHorizontal(self):
         # Returns TRUE if car is in an HORIZONTAL position, FALSE if car is in a VERTICAL position.
         return self.horizontal
-        
+
+t_1 = 0
+t_2 = 0
+t_3 = 0
+t_4 = 0
+
     def getPos(self, upperLeftCoord):
         """
         Calculates the coordinates of the car, given the upper left coordinates of the car.
@@ -49,16 +54,18 @@ class Car(object):
         """ 
         # start = time.time()
         # global getpostime
-
-        coordinates = [upperLeftCoord]
         
+        coordinates = [upperLeftCoord]
+        length = self.length
+        horizontal = self.horizontal
         # For every "piece" of the car, adds a tuple to the list coordinates, corresponding to the coordinates of that
         # piece.
-        for n in range(1,self.length):
+        for n in xrange(1,length):
             if self.horizontal:
                 coordinates.append((upperLeftCoord[0]+n, upperLeftCoord[1]))
             else:
-                coordinates.append((upperLeftCoord[0],upperLeftCoord[1]+n))
+                coordinates.append((upperLeftCoord[0],upperLeftCoord[1]+n)
+        
         
         # getpostime += time.time() - start
 
