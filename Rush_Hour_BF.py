@@ -399,7 +399,7 @@ def saveResults(function, fileName):
     for board in boards:
         file.write(board.printOutput())
         
-    file.write("END FIRST BOARD\n")
+    file.write("--------------------END--------------------\n")
         
     for board in boards:
         file.write(str(board))
