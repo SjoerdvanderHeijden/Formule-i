@@ -396,13 +396,13 @@ def saveResults(function, fileName):
     file.write("Exit coordinate: "+ '\n' + str(boards[0].exitPos[0])\
     + "\n"+ str(boards[0].exitPos[1])+"\n")
 
-    # for board in boards:
-    #     file.write(str(board))
-
-    # file.write("----------------------- \n")
-
     for board in boards:
         file.write(board.printOutput())
+        
+    file.write("END FIRST BOARD\n")
+        
+    for board in boards:
+        file.write(str(board))
 
 ##==========================================================================##
 #profilers
