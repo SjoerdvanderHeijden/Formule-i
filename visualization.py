@@ -82,6 +82,8 @@ class App:
         parkingrow = []
         
         for line in textfile:
+            if line == "--------------------END--------------------":
+                break
             parkingrow = []
             if line != '\n':
                 templine = line.split(' ')
@@ -99,6 +101,8 @@ class App:
             else:
                 parkings.append(parking)
                 parking = []
+                
+                
                 
         return parkings
             
