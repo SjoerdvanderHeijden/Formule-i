@@ -38,11 +38,6 @@ class Car(object):
         # Returns TRUE if car is in an HORIZONTAL position, FALSE if car is in a VERTICAL position.
         return self.horizontal
 
-t_1 = 0
-t_2 = 0
-t_3 = 0
-t_4 = 0
-
     def getPos(self, upperLeftCoord):
         """
         Calculates the coordinates of the car, given the upper left coordinates of the car.
