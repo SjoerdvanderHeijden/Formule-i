@@ -6,7 +6,7 @@ import math, copy, Queue, time
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V2c"
+version = "V2d"
 
 class Car(object):
     """
