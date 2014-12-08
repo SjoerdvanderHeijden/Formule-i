@@ -56,10 +56,10 @@ class Car(object):
         # For every "piece" of the car, adds a tuple to the list coordinates, corresponding to the coordinates of that
         # piece.
         for n in xrange(1,length):
-            if self.horizontal:
+            if horizontal:
                 coordinates.append((upperLeftCoord[0]+n, upperLeftCoord[1]))
             else:
-                coordinates.append((upperLeftCoord[0],upperLeftCoord[1]+n)
+                coordinates.append((upperLeftCoord[0],upperLeftCoord[1]+n))
         
         
         # getpostime += time.time() - start
