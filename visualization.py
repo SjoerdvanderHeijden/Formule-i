@@ -327,5 +327,5 @@ def runApp(parking):
     root.destroy()
 
 
-#runApp('board_3_V2c.txt')
-runApp(rh.board_3())
+runApp('board_4_V2d.txt')
+#runApp(rh.board_3())
