@@ -180,11 +180,11 @@ class App:
                 self.canvas.create_line(y, 1, y, size+2)
                 self.canvas.create_line(2, x, size+2, x)
 
-        self.canvas.create_line(self.exitpos[1]*50+2, self.exitpos[0]*50+52,\
-                                self.exitpos[1]*50+52, self.exitpos[0]*50+2)
+        self.canvas.create_line(self.exitpos[0]*50+2, self.exitpos[1]*50+52,\
+                                self.exitpos[0]*50+52, self.exitpos[1]*50+2)
         
-        self.canvas.create_line(self.exitpos[1]*50+3, self.exitpos[0]*50+3,\
-                                self.exitpos[1]*50+53, self.exitpos[0]*50+53)        
+        self.canvas.create_line(self.exitpos[0]*50+3, self.exitpos[1]*50+3,\
+                                self.exitpos[0]*50+53, self.exitpos[1]*50+53)        
         
         placedcars = set()        
         for row in xrange(len(parking)):
@@ -327,5 +327,5 @@ def runApp(parking):
     root.destroy()
 
 
-runApp('board_3_V2c.txt')
-#runApp(rh.board_3())
+#runApp('board_3_V2c.txt')
+runApp(rh.board_3())
