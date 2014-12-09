@@ -854,7 +854,7 @@ def testMoveCarInParking():
 
 
 if __name__ == '__main__':
-    #saveResults(board_3, "board_3")
+    saveResults(board_4, "board_4")
 
     ##------------------------------------------
 
