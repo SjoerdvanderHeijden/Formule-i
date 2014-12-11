@@ -80,17 +80,23 @@ class App:
         parkings = []
         parking = []
         parkingrow = []
+        textfile.next()
         
         for line in textfile:
-            if line == "--------------------END--------------------":
+            
+            if line[0] == "-":
+                parkings.append(parking)
                 break
+            
             parkingrow = []
             if line != '\n':
                 templine = line.split(' ')
                 line = []
+                
                 for entry in templine:
                     if entry != '':
                         line.append(entry)
+                        
                 for entry in line[:-1]:
                     try:
                         parkingrow.append(int(entry))
@@ -98,10 +104,10 @@ class App:
                         parkingrow.append(None)
                         
                 parking.append(parkingrow)
+                
             else:
                 parkings.append(parking)
                 parking = []
-                
                 
                 
         return parkings
