@@ -333,7 +333,8 @@ class Parking(object):
 
     def printOutput(self):
         input_data = self.parkList[:]
-        output = ''
+        output = '\n'
+#        output = ''        
 
         # exitRow = self.exitPos[1]
         
@@ -354,7 +355,7 @@ class Parking(object):
             #     output += '<--'
             output += '\n'
 
-        output += '\n'
+#        output += '\n'
 
         return output
         
