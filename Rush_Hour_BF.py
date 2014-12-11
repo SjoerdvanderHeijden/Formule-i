@@ -1,7 +1,7 @@
 # Rush Hour.py
 # Contributors: Patrick Schilder, Sjoerd van der Heijden and Alix Dodu
 
-import math, copy, Queue, time
+import math, copy, Queue, time, heapq
 
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
@@ -414,23 +414,23 @@ def BreadthFirstSimulation(parking):
 
     length = max(parking.width, parking.height)-1
 
-    q = Queue.Queue()
-    q.put(parking)
+    # q = Queue.Queue()
+    # q.put(parking)
 
-    visited = set()
+    h = []
+    heapq.heappush(h, (1, parking))
 
-    while not q.empty():
-        currentParking = q.get()
+    visitedParkings = set()
+
+    while True:
+        currentParking = heapq.heappop(h) #q.get()
 
         if type(currentParking.occupiedBy(currentParking.getExit())) == RedCar:
             oplossing = currentParking
             break
 
-        # if currentParking in visited:
-        #     print 'duplicate'
-
-        if currentParking not in visited:
-            visited.add(currentParking)
+        if currentParking not in visitedParkings:
+            visitedParkings.add(currentParking)
 
             # Keeps track of the cars that were already tried to be moved.
             visitedCars = set()
@@ -441,7 +441,8 @@ def BreadthFirstSimulation(parking):
                     if evCar != None and evCar not in visitedCars:
 
                         for move in currentParking.moveCarInParking((x,y)):
-                            q.put(move)
+                            # q.put(move)
+                            heapq.heappush(h,(heuristiek, move))
 
                         visitedCars.add(evCar)
                     y += 1
@@ -825,7 +826,7 @@ def testMoveCarInParking():
 
 if __name__ == '__main__':
 
-    saveResults(board_4, "board_4")
+    # saveResults(board_4, "board_4")
 
 
     ##------------------------------------------
@@ -840,11 +841,11 @@ if __name__ == '__main__':
     # verticaltime = 0
     # getpostime = 0
 
-    # starttot = time.time()
-    # boards = board_3()
-    # stoptot = time.time()
+    starttot = time.time()
+    boards = board_3()
+    stoptot = time.time()
 
-    # print "total time: ", stoptot-starttot
+    print "total time: ", stoptot-starttot
     # print "horizontal: ", horizontaltime
     # print "vertical: ", verticaltime
     # print "getpos: ", getpostime
