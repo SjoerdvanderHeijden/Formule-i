@@ -6,7 +6,7 @@ import math, copy, Queue, time
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V2d"
+version = "V3"
 
 class Car(object):
     """
@@ -139,175 +139,165 @@ class Parking(object):
     def setParent(self, parent):
         self.parent = parent
 
-    def moveCarInParking(self, upperLeftCoord, distance):
+    
+    def moveCarInParking(self, upperLeftCoord):
         """
-        Moves a car, by making a copy of the parking instance and 
+        A generator object that yields parking instances.
+
+        Tries to move a car in both directions, by making a copy of the parking instance and 
         changing the position of the car in parkList of the copy.
         
         @upperLeftCoord: upper left coordinate of the car to be moved.
         (tuple containing two integers)
-        @distance: distance the car is moved. Positive if the car is moved 
-        right/down and negative if it is moved left/up.
-        !!! As it is written now, the car is only moved in the right
-        way if the distance is +1 or -1!!!
-        
-        return: the parkList of the copy, with the car at another position
-        (list of lists)
         """
         # Retrieves a list of tuples corresponding to the coordinates of the car
         car = self.occupiedBy(upperLeftCoord)
         startPos = car.getPos(upperLeftCoord)
 
-        if distance == 0:
-            raise ValueError("0")
-
-        # global horizontaltime
-        # global verticaltime
-        # start = time.time()
-                
         if car.isHorizontal():
-            #print car.getName(), "is horizontal"
+            prevx = startPos[0][0] - 1
+            firstx = startPos[0][0]
+            lastx = startPos[-1][0]
+            nextx = startPos[-1][0] + 1
 
-            #Checks if the car can be moved if trying to go RIGHT:
-            # First, checks if it is possible. 
-            #   1) Checks wether the car is moved inside the parking.
-            if (startPos[-1][0] + distance) >= self.width or (startPos[0][0] + distance) < 0:
-                raise ValueError ("Cannot move car trough the parking walls.")
-            #   2) For every tile in the way of moving checks whether the way is free of cars.
-            if distance > 0:
-                nextTile = startPos[-1][0] + 1
-                for x in range(nextTile, nextTile + distance):
-                    #print "x1",x
-                    if self.parkList[x][startPos[0][1]] != None:
-                        raise ValueError\
-    ("Cannot move car, there is another car in the way.")
+            # Checks if the car can be moved to the RIGHT:
+            if nextx < self.width and self.parkList[nextx][startPos[0][1]] == None:
+                # Makes a copy of the current parking. The new position of the car will 
+                # be stored in this copy 
+                newParking = copy.copy(self)
+                newParking.setParent(self)
+                tempList = list(newParking.parkList)
+                y = upperLeftCoord[1]      
 
-            
-            # Checks wether the car can be moved if trying to go LEFT
-            else:
-                nextTile = startPos[0][0] - 1
-                for x in range(nextTile, nextTile + distance, -1):
-                    #print "x2",x
-                    if self.parkList[x][startPos[0][1]] != None:
-                        raise ValueError\
-    ("Cannot move car, there is another car in the way.")
+                canMove = True          
 
-            # Second, actually moves the car (horizontal).
+                while canMove:
+                    #remove:
+                    tempCol = list(tempList[firstx])
+                    tempCol[y] = None
+                    tempList[firstx] = tuple(tempCol)
 
-            # Makes a copy of the current parking. The new position of the car will 
-            # be stored in this copy 
-            newParking = copy.copy(self)
-            newParking.setParent(self)  
+                    #place:
+                    tempCol = list(tempList[nextx])
+                    tempCol[y] = car.getName()
+                    tempList[nextx] = tuple(tempCol)
 
-            y = upperLeftCoord[1]
-            tempList = list(newParking.parkList)
+                    # return new parking:
+                    newParking.parkList = tuple(tempList)
+                    yield newParking
 
-            #remove:
-            for pos in startPos:
-                x = pos[0]
+                    firstx +=1
+                    nextx +=1
 
-                try:
-                    if tempList[x][y] == car.getName():
-                        tempCol = list(tempList[x])
-                        tempCol[y] = None
-                        tempList[x] = tuple(tempCol)
-                    else:
-                        raise ValueError("Cannot remove cars other then selected!")
-                    
-                except IndexError:
-                    raise ValueError("Cannot remove outside parking range!")
+                    if nextx >= self.width or self.parkList[nextx][startPos[0][1]] != None:
+                        canMove = False
 
-            #place:
-            for pos in startPos:
-                x = pos[0]+distance
+            # Checks if the car can be moved to the LEFT:
+            if prevx >= 0 and self.parkList[prevx][startPos[0][1]] == None:
+                # Makes a copy of the current parking. The new position of the car will 
+                # be stored in this copy 
+                newParking = copy.copy(self)
+                newParking.setParent(self)
+                tempList = list(newParking.parkList)
+                y = upperLeftCoord[1]      
 
-                try:
-                    if tempList[x][y] == None:
-                        tempCol = list(tempList[x])
-                        tempCol[y] = car.getName()
-                        tempList[x] = tuple(tempCol)
-                    else:
-                        raise ValueError("Double car placing!")
-                    
-                except IndexError:
-                    raise ValueError("Car out of parking range!")
+                canMove = True          
 
-            newParking.parkList = tuple(tempList)
+                while canMove:
+                    #remove:
+                    tempCol = list(tempList[lastx])
+                    tempCol[y] = None
+                    tempList[lastx] = tuple(tempCol)
 
-            # horizontaltime += time.time() - start
-            
+                    #place:
+                    tempCol = list(tempList[prevx])
+                    tempCol[y] = car.getName()
+                    tempList[prevx] = tuple(tempCol)
+
+                    # return new parking:
+                    newParking.parkList = tuple(tempList)
+                    yield newParking
+
+                    prevx -=1
+                    lastx -=1
+
+                    if prevx < 0 or self.parkList[prevx][startPos[0][1]] != None:
+                        canMove = False
 
 
         # If car is vertical:
         else:
-            if (startPos[-1][1] + distance) >= self.height or (startPos[0][1] + distance) < 0:
-                raise ValueError ("Cannot move car trough the parking walls.")
-            # Checks wether the car can be moved DOWN
-            if distance > 0:
-                nextTile = startPos[-1][1] + 1
-                for y in range(nextTile, nextTile + distance):
-                    if self.parkList[startPos[0][0]][y] != None:
-                        raise ValueError\
-    ("Cannot move car, there is another car in the way.")
+            prevy = startPos[0][1] - 1
+            firsty = startPos[0][1]
+            lasty = startPos[-1][1]
+            nexty = startPos[-1][1] + 1
+
+            # Checks if the car can be moved DOWN:
+            if nexty < self.height and self.parkList[startPos[0][0]][nexty] == None:
+                # Makes a copy of the current parking. The new position of the car will 
+                # be stored in this copy 
+                newParking = copy.copy(self)
+                newParking.setParent(self)
+
+                x = upperLeftCoord[0]
+                tempList = list(newParking.parkList)
+                tempCol = list(tempList[x])
+
+                canMove = True
+
+                while canMove:
+                    #remove:
+                    tempCol[firsty] = None
+
+                    #place:
+                    tempCol[nexty] = car.getName()
+
+                    # return new parking:
+                    tempList[x] = tuple(tempCol)                    
+                    newParking.parkList = tuple(tempList)
+                    yield newParking
+
+                    firsty +=1
+                    nexty +=1
+
+                    if nexty >= self.height or self.parkList[startPos[0][0]][nexty] != None:
+                        canMove = False
+            
+            # Checks if the car can be moved UP:
+            if prevy >= 0 and self.parkList[startPos[0][0]][prevy] == None:
+                # Makes a copy of the current parking. The new position of the car will 
+                # be stored in this copy 
+                newParking = copy.copy(self)
+                newParking.setParent(self)
+
+                x = upperLeftCoord[0]
+                tempList = list(newParking.parkList)
+                tempCol = list(tempList[x])
+
+                canMove = True
+
+                while canMove:
+                    #remove:
+                    tempCol[lasty] = None
+
+                    #place:
+                    tempCol[prevy] = car.getName()
+
+                    # return new parking:
+                    tempList[x] = tuple(tempCol)                    
+                    newParking.parkList = tuple(tempList)
+                    yield newParking
+
+                    lasty -=1
+                    prevy -=1
+
+                    if prevy < 0 or self.parkList[startPos[0][0]][prevy] != None:
+                        canMove = False
 
 
-            # Checks wether the car can be moved UP
-            else:
-                nextTile = startPos[0][1] - 1
-                for y in range(nextTile, nextTile + distance, -1):
-                    if self.parkList[startPos[0][0]][y] != None:
-                        raise ValueError\
-    ("Cannot move car, there is another car in the way.")   
-                 
-            # Second, actually moves the car (vertical).
 
-            # Makes a copy of the current parking. The new position of the car will 
-            # be stored in this copy 
-            newParking = copy.copy(self)
-            newParking.setParent(self)  
-
-
-            x = upperLeftCoord[0]
-            tempList = list(newParking.parkList)
-            tempCol = list(tempList[x])
-
-            #clear:
-            for pos in startPos:
-                y = pos[1]
-
-                try:
-                    if tempCol[y] == car.getName():
-                        tempCol[y] = None
-                    else:
-                        raise ValueError("Cannot remove cars other then selected!")
-                    
-                except IndexError:
-                    raise ValueError("Cannot remove outside parking range!")
-
-            #place:
-            for pos in startPos:
-                y = pos[1]+distance
-
-                try:
-                    if tempCol[y] == None:
-                        tempCol[y] = car.getName()
-                    else:
-                        raise ValueError("Double car placing!")
-                    
-                except IndexError:
-                    raise ValueError("Car out of parking range!")
-
-            tempList[x] = tuple(tempCol)
-            newParking.parkList = tuple(tempList)
-
-            # verticaltime += time.time() - start
-
-                
-        return newParking
-
-
-    def __eq__(x, y):
-        return x.parkList == y.parkList
+    def __eq__(a, b):
+        return a.parkList == b.parkList
 
     def __hash__(self):
         return hash(self.parkList)
@@ -328,6 +318,8 @@ class Parking(object):
                         output += str(input_data[x][y]) + '  '
                 elif input_data[x][y] == None:
                     output += '.  '
+
+                # Als er een onbekend object in staat (iets fout is gegaan)
                 else:
                     output += '#  '
 
@@ -448,32 +440,9 @@ def BreadthFirstSimulation(parking):
                 for evCar in column:
                     if evCar != None and evCar not in visitedCars:
 
-                        ##### more tiles is 1 step: #####
+                        for move in currentParking.moveCarInParking((x,y)):
+                            q.put(move)
 
-                        for move in xrange(-1,-length,-1):
-                            try:
-                                q.put(currentParking.moveCarInParking((x,y,),\
-                                                                        move))
-                            except ValueError:
-                                break
-
-                        for move in xrange(1,length):
-                            try:
-                                q.put(currentParking.moveCarInParking((x,y,),\
-                                                                        move))
-                            except ValueError:
-                                break
-
-                        ##### 1 tile is 1 step: #####
-
-                        # try:
-                        #     q.put(currentParking.moveCarInParking((x, y), 1) )
-                        # except ValueError:
-                        #     pass
-                        # try:
-                        #     q.put(currentParking.moveCarInParking((x, y), -1) )
-                        # except ValueError:
-                        #     pass
                         visitedCars.add(evCar)
                     y += 1
                 x += 1
@@ -843,6 +812,7 @@ def testMoveCarInParking():
     cars.append(Car(2,False))
     parking1.addCar(cars[-1], (3,2))
 
+        
     boards = BreadthFirstSimulation(parking1)
 
     # for board in boards:
@@ -855,12 +825,12 @@ def testMoveCarInParking():
 
 if __name__ == '__main__':
 
-    saveResults(board_3, "board_3")
+    # saveResults(board_3, "board_3")
 
 
     ##------------------------------------------
 
-    # board_3()
+    # board_1()
     # testMoveCarInParking()
 
     ##------------------------------------------
@@ -870,11 +840,11 @@ if __name__ == '__main__':
     # verticaltime = 0
     # getpostime = 0
 
-    # starttot = time.time()
-    # boards = board_3()
-    # stoptot = time.time()
+    starttot = time.time()
+    boards = board_3()
+    stoptot = time.time()
 
-    # print "total time: ", stoptot-starttot
+    print "total time: ", stoptot-starttot
     # print "horizontal: ", horizontaltime
     # print "vertical: ", verticaltime
     # print "getpos: ", getpostime
