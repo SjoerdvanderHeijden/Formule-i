@@ -825,7 +825,7 @@ def testMoveCarInParking():
 
 if __name__ == '__main__':
 
-    # saveResults(board_3, "board_3")
+    saveResults(board_4, "board_4")
 
 
     ##------------------------------------------
@@ -840,11 +840,11 @@ if __name__ == '__main__':
     # verticaltime = 0
     # getpostime = 0
 
-    starttot = time.time()
-    boards = board_3()
-    stoptot = time.time()
+    # starttot = time.time()
+    # boards = board_3()
+    # stoptot = time.time()
 
-    print "total time: ", stoptot-starttot
+    # print "total time: ", stoptot-starttot
     # print "horizontal: ", horizontaltime
     # print "vertical: ", verticaltime
     # print "getpos: ", getpostime
