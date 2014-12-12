@@ -6,7 +6,7 @@ import math, copy, Queue, time, heapq
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "V3"
+version = "V3b"
 
 class Car(object):
     """
@@ -88,6 +88,7 @@ class Parking(object):
         self.height = height
         self.exitPos = exitPos
         self.parent = None
+        self.numMoves = 0
 
         # Parking representation is a tuple of tuples. The tuples correspond to x-coordinates, and their indexes to y-coordinates.
         # Thus: Element at position (x,y) is found at parkList[x][y]
@@ -166,6 +167,8 @@ class Parking(object):
                 # be stored in this copy 
                 newParking = copy.copy(self)
                 newParking.setParent(self)
+                newParking.numMoves +=1
+
                 tempList = list(newParking.parkList)
                 y = upperLeftCoord[1]      
 
@@ -198,6 +201,8 @@ class Parking(object):
                 # be stored in this copy 
                 newParking = copy.copy(self)
                 newParking.setParent(self)
+                newParking.numMoves +=1
+
                 tempList = list(newParking.parkList)
                 y = upperLeftCoord[1]      
 
@@ -238,6 +243,7 @@ class Parking(object):
                 # be stored in this copy 
                 newParking = copy.copy(self)
                 newParking.setParent(self)
+                newParking.numMoves +=1
 
                 x = upperLeftCoord[0]
                 tempList = list(newParking.parkList)
@@ -269,6 +275,7 @@ class Parking(object):
                 # be stored in this copy 
                 newParking = copy.copy(self)
                 newParking.setParent(self)
+                newParking.numMoves +=1
 
                 x = upperLeftCoord[0]
                 tempList = list(newParking.parkList)
@@ -402,7 +409,7 @@ def saveResults(function, fileName):
 ##==========================================================================##
 #profilers
            
-def BreadthFirstSimulation(parking):
+def breadthFirstSimulation(parking):
     """
     @parking: parking to be solved. (instance of Parking)
     """ 
@@ -414,21 +421,19 @@ def BreadthFirstSimulation(parking):
     y = 0
 
     length = max(parking.width, parking.height)-1
+    exit = parking.getExit()
+    exitRow = exit[1]
+    exitColumn = exit[0]
 
-    # q = Queue.Queue()
-    # q.put(parking)
-
-    h = []
-    heapq.heappush(h, (1, parking))
+    q = Queue.Queue()
+    q.put(parking)
 
     visitedParkings = set()
 
-    while True:
-        currentParking = heapq.heappop(h) #q.get()
+    search = True
 
-        if type(currentParking.occupiedBy(currentParking.getExit())) == RedCar:
-            oplossing = currentParking
-            break
+    while search:
+        currentParking = q.get()
 
         if currentParking not in visitedParkings:
             visitedParkings.add(currentParking)
@@ -442,8 +447,12 @@ def BreadthFirstSimulation(parking):
                     if evCar != None and evCar not in visitedCars:
 
                         for move in currentParking.moveCarInParking((x,y)):
-                            # q.put(move)
-                            heapq.heappush(h,(heuristiek, move))
+                            if move.parkList[exitColumn][exitRow] == 1:
+                                oplossing = move
+                                search = False
+                                break
+
+                            q.put(move)
 
                         visitedCars.add(evCar)
                     y += 1
@@ -462,9 +471,89 @@ def BreadthFirstSimulation(parking):
     route.reverse()
     return route
 
-##==========================================================================##             
+##==========================================================================##
+
+def aStarSimulation(parking):
+    """
+    @parking: parking to be solved. (instance of Parking)
+    """ 
+    # Looks at every tile of parking, to see if there is a car there that
+    # can be moved. Starts in the upper left corner, and goes down, first the 
+    # first column, then the second..
     
-def board_1():
+    x = 0
+    y = 0
+
+    length = max(parking.width, parking.height)-1
+    exit = parking.getExit()
+    exitRow = exit[1]
+    exitColumn = exit[0]
+
+    h = []
+    heapq.heappush(h, (1, parking))
+
+    visitedParkings = set()
+
+    search = True
+
+    while search:
+        currentParking = heapq.heappop(h)[1]
+
+        if currentParking not in visitedParkings:
+            visitedParkings.add(currentParking)
+
+            # Keeps track of the cars that were already tried to be moved.
+            visitedCars = set()
+
+            for column in currentParking.getParking():
+                # evCar voor "eventual car" ;) 
+                for evCar in column:
+                    if evCar != None and evCar not in visitedCars:
+
+                        for move in currentParking.moveCarInParking((x,y)):
+                            if move.parkList[exitColumn][exitRow] == 1:
+                                oplossing = move
+                                search = False
+                                break
+
+                            heuristic = move.numMoves
+
+                            exitSearch = True
+                            exitx = exitColumn-1
+
+                            while exitSearch:
+
+                                if move.parkList[exitx][exitRow] == 1:
+                                    exitSearch = False
+                                    break
+
+                                elif move.parkList[exitx][exitRow] != None:
+                                    heuristic +=1
+
+                                exitx -=1
+
+                            heapq.heappush(h,(heuristic, move))
+
+                        visitedCars.add(evCar)
+                    y += 1
+                x += 1
+                y = 0
+            x = 0
+            y = 0
+
+    route = [oplossing]
+    parent = oplossing.getParent()
+
+    while parent != None:
+        route.append(parent)
+        parent = parent.getParent()
+
+    route.reverse()
+    return route
+
+##==========================================================================##     
+    
+def board_1(algorithm = breadthFirstSimulation):
     exitPos1 = (5,2)
     parking1 = Parking(6,6,exitPos1)
 
@@ -498,7 +587,7 @@ def board_1():
     cars.append(Car(3,False))
     parking1.addCar(cars[-1],(3,3))
 
-    boards = BreadthFirstSimulation(parking1)
+    boards = algorithm(parking1)
 
 
     # for board in boards:
@@ -508,7 +597,7 @@ def board_1():
 
     return boards
 
-def board_2():
+def board_2(algorithm = breadthFirstSimulation):
     h = True
     v = False
     
@@ -557,7 +646,7 @@ def board_2():
     cars.append(Car(3,v))
     parking1.addCar(cars[-1], (5,1))
 
-    boards = BreadthFirstSimulation(parking1)
+    boards = algorithm(parking1)
 
 
     # for board in boards:
@@ -568,7 +657,7 @@ def board_2():
     return boards
         
 
-def board_3():
+def board_3(algorithm = breadthFirstSimulation):
     exitPos2 = (5,2)
     parking1 = Parking(6,6,exitPos2)
     global cars
@@ -613,7 +702,7 @@ def board_3():
     cars.append(Car(3,True))
     parking1.addCar(cars[-1],(3,0))
 
-    boards = BreadthFirstSimulation(parking1)
+    boards = algorithm(parking1)
 
 
     # for board in boards:
@@ -624,7 +713,7 @@ def board_3():
     return boards
 
 
-def board_4():
+def board_4(algorithm = breadthFirstSimulation):
     h = True
     v = False
     
@@ -700,7 +789,7 @@ def board_4():
     cars.append(Car(2,h))
     parking1.addCar(cars[-1], (7,8))
 
-    boards = BreadthFirstSimulation(parking1)
+    boards = algorithm(parking1)
 
  #   for board in boards:
 #        print board
@@ -710,7 +799,7 @@ def board_4():
 
 
 
-def board_5():
+def board_5(algorithm = breadthFirstSimulation):
     h = True
     v = False
 
@@ -793,7 +882,7 @@ def board_5():
     parking5.addCar(cars[-1],(8,4))
 
 
-    boards = BreadthFirstSimulation(parking5)
+    boards = algorithm(parking5)
 
  #   for board in boards:
 #        print board
@@ -802,7 +891,7 @@ def board_5():
     return boards
 
 
-def testMoveCarInParking():             
+def testMoveCarInParking(algorithm = breadthFirstSimulation):             
     exitPos1 = (5,2)
     parking1 = Parking(6,6,exitPos1)
     global cars
@@ -815,7 +904,7 @@ def testMoveCarInParking():
     parking1.addCar(cars[-1], (3,2))
 
         
-    boards = BreadthFirstSimulation(parking1)
+    boards = algorithm(parking1)
 
     # for board in boards:
     #     print board
@@ -832,7 +921,7 @@ if __name__ == '__main__':
 
     ##------------------------------------------
 
-    # board_1()
+    # board_3()
     # testMoveCarInParking()
 
     ##------------------------------------------
@@ -843,7 +932,7 @@ if __name__ == '__main__':
     # getpostime = 0
 
     starttot = time.time()
-    boards = board_3()
+    boards = board_3(algorithm=aStarSimulation)
     stoptot = time.time()
 
     print "total time: ", stoptot-starttot
