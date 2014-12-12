@@ -131,7 +131,6 @@ class Parking(object):
     def occupiedBy(self, pos):
         if self.parkList[pos[0]][pos[1]] == None:
             return None
-
         return cars[self.parkList[pos[0]][pos[1]]]
 
     def getParent(self):
@@ -140,7 +139,19 @@ class Parking(object):
     def setParent(self, parent):
         self.parent = parent
 
-    
+    def carsBlockExit(self):
+        """
+        Return: The number of cars between the red car and the exit. (int) 
+        """
+        carsBlocking = 0
+        
+        for x in range(0, self.width-3):
+            if self.parkList[x][self.exitpos] == 1:
+                for x2 in range(x+2, self.width-1):
+                    if self.parkList[x2][self.exitpos] != None:
+                        carsBlocking += 1
+        return carsBlocking
+                
     def moveCarInParking(self, upperLeftCoord):
         """
         A generator object that yields parking instances.
@@ -506,7 +517,8 @@ def aStarSimulation(parking):
             visitedCars = set()
 
             for column in currentParking.getParking():
-                # evCar voor "eventual car" ;) 
+                # Checks for every tile if a car is parked there. 
+                # evCar stands for "eventual car"
                 for evCar in column:
                     if evCar != None and evCar not in visitedCars:
 
