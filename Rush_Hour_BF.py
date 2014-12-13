@@ -399,7 +399,7 @@ def saveResults(function, fileName):
     file = open(name, 'w')
 
     start = time.time()
-    boards = function()
+    boards = function(algorithm=aStarSimulation)
     stop = time.time()
 
     file.write("Solved in " + str(len(boards)-1) + " steps.\n")
@@ -543,6 +543,13 @@ def aStarSimulation(parking):
                                     heuristic +=1
 
                                 exitx -=1
+
+                            # Voor bord 5: geeft penalty als de vrachtwagen rechtsonder de weg verspert (en vaststaat)
+                            # 
+                            # for ycheck in xrange(exitRow-1, exitRow-4, -1):
+                            #     if (move.parkList[8][ycheck] != None) and (move.parkList[8][ycheck] != 24):
+                            #         heuristic += 3
+                            #         break
 
                             heapq.heappush(h,(heuristic, move))
 
@@ -893,7 +900,7 @@ def board_5(algorithm = breadthFirstSimulation):
     cars.append(Car(3,v))
     parking5.addCar(cars[-1],(8,4))
 
-
+    
     boards = algorithm(parking5)
 
  #   for board in boards:
@@ -928,7 +935,7 @@ def testMoveCarInParking(algorithm = breadthFirstSimulation):
 
 if __name__ == '__main__':
 
-    # saveResults(board_4, "board_4")
+    saveResults(board_5, "board_5")
 
 
     ##------------------------------------------
@@ -943,11 +950,11 @@ if __name__ == '__main__':
     # verticaltime = 0
     # getpostime = 0
 
-    starttot = time.time()
-    boards = board_3(algorithm=aStarSimulation)
-    stoptot = time.time()
+    # starttot = time.time()
+    # boards = board_5(algorithm=aStarSimulation)
+    # stoptot = time.time()
 
-    print "total time: ", stoptot-starttot
+    # print "total time: ", stoptot-starttot
     # print "horizontal: ", horizontaltime
     # print "vertical: ", verticaltime
     # print "getpos: ", getpostime
