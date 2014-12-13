@@ -910,6 +910,104 @@ def board_5(algorithm = breadthFirstSimulation):
     return boards
 
 
+def board_6(algorithm = breadthFirstSimulation):
+    h = True
+    v = False
+
+    exitPos6 = (8,4)
+    parking6 = Parking(9,9,exitPos6)
+
+    global cars
+    cars = [None]
+
+    cars.append(RedCar(2,h))
+    parking6.addCar(cars[-1],(0,4))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(0,0))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(2,0))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(5,1))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(2,2))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(7,2))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(4,5))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(6,5))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(2,6))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(2,7))
+
+    cars.append(Car(2,h))
+    parking6.addCar(cars[-1],(5,7))
+
+    cars.append(Car(2,v))
+    parking6.addCar(cars[-1],(4,0))
+
+    cars.append(Car(2,v))
+    parking6.addCar(cars[-1],(7,0))
+
+    cars.append(Car(2,v))
+    parking6.addCar(cars[-1],(0,1))
+
+    cars.append(Car(2,v))
+    parking6.addCar(cars[-1],(4,2))
+
+    cars.append(Car(2,v))
+    parking6.addCar(cars[-1],(5,2))
+
+    cars.append(Car(2,v))
+    parking6.addCar(cars[-1],(2,3))
+
+    cars.append(Car(2,v))
+    parking6.addCar(cars[-1],(1,5))    
+
+    cars.append(Car(3,h))
+    parking6.addCar(cars[-1],(5,6))
+
+    cars.append(Car(3,h))
+    parking6.addCar(cars[-1],(1,1))
+
+    cars.append(Car(3,h))
+    parking6.addCar(cars[-1],(6,3))
+
+    cars.append(Car(3,h))
+    parking6.addCar(cars[-1],(1,8))
+
+    cars.append(Car(3,v))
+    parking6.addCar(cars[-1],(0,6))
+
+    cars.append(Car(3,v))
+    parking6.addCar(cars[-1],(4,6))
+
+    cars.append(Car(3,v))
+    parking6.addCar(cars[-1],(8,5))
+
+    cars.append(Car(3,v))
+    parking6.addCar(cars[-1],(3,3))
+
+    
+    boards = algorithm(parking6)
+
+ #   for board in boards:
+#        print board
+#
+#    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    return boards
+
+
 def testMoveCarInParking(algorithm = breadthFirstSimulation):             
     exitPos1 = (5,2)
     parking1 = Parking(6,6,exitPos1)
@@ -935,7 +1033,7 @@ def testMoveCarInParking(algorithm = breadthFirstSimulation):
 
 if __name__ == '__main__':
 
-    saveResults(board_5, "board_5")
+    #saveResults(board_5, "board_5")
 
 
     ##------------------------------------------
@@ -950,11 +1048,11 @@ if __name__ == '__main__':
     # verticaltime = 0
     # getpostime = 0
 
-    # starttot = time.time()
-    # boards = board_5(algorithm=aStarSimulation)
-    # stoptot = time.time()
+    starttot = time.time()
+    boards = board_6(algorithm=aStarSimulation)
+    stoptot = time.time()
 
-    # print "total time: ", stoptot-starttot
+    print "total time: ", stoptot-starttot
     # print "horizontal: ", horizontaltime
     # print "vertical: ", verticaltime
     # print "getpos: ", getpostime
