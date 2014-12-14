@@ -540,7 +540,7 @@ def aStarSimulation(parking):
                                     break
 
                                 elif move.parkList[exitx][exitRow] != None:
-                                    heuristic +=3
+                                    heuristic +=20
 
                                 exitx -=1
 
@@ -1033,7 +1033,7 @@ def testMoveCarInParking(algorithm = breadthFirstSimulation):
 
 if __name__ == '__main__':
 
-    saveResults(board_6, "board_6")
+    #saveResults(board_6, "board_6")
 
 
     ##------------------------------------------
@@ -1048,11 +1048,11 @@ if __name__ == '__main__':
     # verticaltime = 0
     # getpostime = 0
 
-    # starttot = time.time()
-    # boards = board_6(algorithm=aStarSimulation)
-    # stoptot = time.time()
+    starttot = time.time()
+    boards = board_6(algorithm=aStarSimulation)
+    stoptot = time.time()
 
-    # print "total time: ", stoptot-starttot
+    print "total time: ", stoptot-starttot
     # print "horizontal: ", horizontaltime
     # print "vertical: ", verticaltime
     # print "getpos: ", getpostime
