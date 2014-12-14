@@ -484,6 +484,73 @@ def breadthFirstSimulation(parking):
 
 ##==========================================================================##
 
+def breadthFirstSimulation2(parking):
+    """
+    @parking: parking to be solved. (instance of Parking)
+    """ 
+    # Looks at every tile of parking, to see if there is a car there that
+    # can be moved. Starts in the upper left corner, and goes down, first the 
+    # first column, then the second..
+    
+    x = 0
+    y = 0
+
+    length = max(parking.width, parking.height)-1
+    exit = parking.getExit()
+    exitRow = exit[1]
+    exitColumn = exit[0]
+
+    q = Queue.Queue()
+    q.put(parking)
+
+    visitedParkings = set()
+    visitedParkings.add(parking)
+
+    search = True
+
+    while search:
+        currentParking = q.get()
+
+        # Keeps track of the cars that were already tried to be moved.
+        visitedCars = set()
+        print len(visitedParkings)
+
+        for column in currentParking.getParking():
+            # evCar voor "eventual car" ;) 
+            for evCar in column:
+                if evCar != None and evCar not in visitedCars:
+
+                    for move in currentParking.moveCarInParking((x,y)):
+                        if move.parkList[exitColumn][exitRow] == 1:
+                            oplossing = move
+                            search = False
+                            break
+
+                        if move not in visitedParkings:
+                    
+                            visitedParkings.add(move)
+
+                            q.put(move)
+
+                    visitedCars.add(evCar)
+                y += 1
+            x += 1
+            y = 0
+        x = 0
+        y = 0
+
+    route = [oplossing]
+    parent = oplossing.getParent()
+
+    while parent != None:
+        route.append(parent)
+        parent = parent.getParent()
+
+    route.reverse()
+    return route
+
+##==========================================================================##
+
 def aStarSimulation(parking):
     """
     @parking: parking to be solved. (instance of Parking)
@@ -520,14 +587,14 @@ def aStarSimulation(parking):
                 # Checks for every tile if a car is parked there. 
                 # evCar stands for "eventual car"
                 for evCar in column:
-                    if evCar != None and evCar not in visitedCars:
+                    if evCar != None and evCar not in visitedCars and search:
 
                         for move in currentParking.moveCarInParking((x,y)):
                             if move.parkList[exitColumn][exitRow] == 1:
                                 oplossing = move
                                 search = False
                                 break
-
+                        
                             heuristic = move.numMoves
 
                             exitSearch = True
@@ -628,6 +695,9 @@ def aStarSimulation(parking):
                             #     if (move.parkList[8][ycheck] != None) and (move.parkList[8][ycheck] != 24):
                             #         heuristic += 3
                             #         break
+                            if heuristic == move.numMoves:
+                                heuristic = 1
+                        
 
                             heapq.heappush(h,(heuristic, move))
 
@@ -1142,13 +1212,19 @@ def testMoveCarInParking(algorithm = breadthFirstSimulation):
     cars.append(Car(2,False))
     parking1.addCar(cars[-1], (3,2))
 
+    cars.append(Car(2,True))
+    parking1.addCar(cars[-1], (3,1))
+
+    cars.append(Car(2,True))
+    parking1.addCar(cars[-1], (3,4))
+
         
     boards = algorithm(parking1)
 
     # for board in boards:
     #     print board
 
-    # print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
 
     return boards
 
@@ -1171,7 +1247,7 @@ if __name__ == '__main__':
     # getpostime = 0
 
     starttot = time.time()
-    boards = board_6(algorithm=aStarSimulation)
+    boards = board_4(algorithm=aStarSimulation)
     stoptot = time.time()
 
     print "total time: ", stoptot-starttot
