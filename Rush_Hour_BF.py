@@ -783,8 +783,6 @@ def aStarSimulation(parking):
                             #     if (move.parkList[8][ycheck] != None) and (move.parkList[8][ycheck] != 24):
                             #         heuristic += 3
                             #         break
-                            if heuristic == move.numMoves:
-                                heuristic = 1
                         
 
                             heapq.heappush(h,(heuristic, move))
@@ -848,7 +846,7 @@ def board_1(algorithm = breadthFirstSimulation):
     # for board in boards:
     #     print board
 
-    # print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
 
     return boards
 
@@ -907,7 +905,7 @@ def board_2(algorithm = breadthFirstSimulation):
     # for board in boards:
     #     print board
 
-    # print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
 
     return boards
         
@@ -963,7 +961,7 @@ def board_3(algorithm = breadthFirstSimulation):
     # for board in boards:
     #     print board
 
-    # print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
 
     return boards
 
@@ -1049,7 +1047,8 @@ def board_4(algorithm = breadthFirstSimulation):
  #   for board in boards:
 #        print board
 #
-#    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
+
     return boards
 
 
@@ -1142,7 +1141,7 @@ def board_5(algorithm = breadthFirstSimulation):
  #   for board in boards:
 #        print board
 #
-#    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
     return boards
 
 
@@ -1240,7 +1239,8 @@ def board_6(algorithm = breadthFirstSimulation):
  #   for board in boards:
 #        print board
 #
-#    print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
+
     return boards
 
 
@@ -1391,7 +1391,7 @@ def board_7(algorithm = breadthFirstSimulation):
     # for board in boards:
     #     print board
 
-    # print 'Opgelost in:', len(boards)-1, ' stappen.'
+    print 'Opgelost in:', len(boards)-1, ' stappen.'
 
     return boards
 
@@ -1460,7 +1460,7 @@ def testMoveCarInParking2(algorithm = breadthFirstSimulation):
 
 if __name__ == '__main__':
 
-    saveResults(board_5, "board_5")
+    #saveResults(board_5, "board_5")
 
 
 
