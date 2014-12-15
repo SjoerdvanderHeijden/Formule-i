@@ -1425,6 +1425,39 @@ def testMoveCarInParking(algorithm = breadthFirstSimulation):
     return boards
 
 
+def testMoveCarInParking2(algorithm = breadthFirstSimulation):             
+    exitPos1 = (5,2)
+    parking1 = Parking(6,6,exitPos1)
+    global cars
+    cars = [None]
+
+    cars.append(RedCar(2,True))
+    parking1.addCar(cars[-1], (0,2))
+
+    cars.append(Car(3,False))
+    parking1.addCar(cars[-1], (3,3))
+
+    cars.append(Car(3,True))
+    parking1.addCar(cars[-1], (3,0)) 
+
+    cars.append(Car(2,True))
+    parking1.addCar(cars[-1], (0,0))  
+
+    # cars.append(Car(2,False))
+    # parking1.addCar(cars[-1], (3,0))
+
+    # cars.append(Car(2,True))
+    # parking1.addCar(cars[-1], (3,4))
+
+        
+    boards = algorithm(parking1)
+
+    # for board in boards:
+    #     print board
+
+    return boards
+
+
 if __name__ == '__main__':
 
     saveResults(board_5, "board_5")
