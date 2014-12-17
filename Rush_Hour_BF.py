@@ -1487,7 +1487,7 @@ if __name__ == '__main__':
     # getpostime = 0
 
     starttot = time.time()
-    boards = board_6(algorithm=aStarSimulation)
+    boards = board_1(algorithm=aStarSimulation)
     stoptot = time.time()
 
     print "total time: ", stoptot-starttot
