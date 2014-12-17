@@ -598,182 +598,193 @@ def aStarSimulation(parking):
                         
                             heuristic = move.numMoves
 
+                            carsInTheWay = set()
                             exitSearch = True
                             exitx = exitColumn-1
 
                             while exitSearch:
                                 carNum = move.parkList[exitx][exitRow]
+                                carsInTheWay.add(carNum)
 
                                 if carNum == 1:
                                     exitSearch = False
                                     break
 
                                 elif carNum != None:
+
+                                    #### LEVEL 1  ####
                                     heuristic += 1
 
-#                                    # # Checks wether there are cars(2) in the way of the car(1) between RedCar and exit.
-#                                    # # Adds a penalty for every car(2).
-#                                    # belowInTheWay = 0
-#                                    # aboveInTheWay = 0
-#                                    carNumLength = cars[carNum].length
-#
-#                                    for y2 in range(exitRow - carNumLength, exitRow + carNumLength +1):
-#
-#                                        evCar2 = move.parkList[exitx][y2]
-#
-#                                        if (evCar2 != None) and (evCar2 != carNum) and (cars[evCar2].horizontal):
-#                                            heuristic += 1
-#
-#                                            # Checks wether there are cars(3) in the way of the car(2) in the way of the car(1) between RedCar and exit.
-#                                            # Adds a penalty for every car(3).
-#                                            car2Length = cars[evCar2].length
-#
-#                                            for x3 in range(exitx-car2Length, exitx):
-#                                                try:
-#                                                    evCar3 = move.parkList[x3][y2]
-#                                                    if (evCar3 != None) and (evCar3 != evCar2) and (not cars[evCar3].isHorizontal()):
-#                                                        heuristic += 1
-#
-#
-#                                                        car3Length = cars[evCar3].getLength()
-#
-#                                                        for y4 in range(y2 - car3Length, y2):
-#                                                            try:
-#                                                                evCar4 = move.parkList[x3][y4]
-#                                                                if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
-#                                                                    heuristic += 1
-#                                                            except IndexError:
-#                                                                break
-#
-#                                                        for y4 in range(y2 + 1, y2 + car3Length + 1):
-#                                                            try:
-#                                                                evCar4 = move.parkList[x3][y4]
-#                                                                if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
-#                                                                    heuristic += 1
-#                                                            except IndexError:
-#                                                                break
-#
-#
-#                                                except IndexError:
-#                                                    break
-#
-#                                            for x3 in range(exitx +1, exitx + car2Length +1):
-#                                                try:
-#                                                    evCar3 = move.parkList[x3][y2]
-#                                                    if (evCar3 != None) and (evCar3 != evCar2) and (not cars[evCar3].isHorizontal()):
-#                                                        heuristic += 1
-#
-#
-#                                                        car3Length = cars[evCar3].getLength()
-#
-#                                                        for y4 in range(y2 - car3Length, y2):
-#                                                            try:
-#                                                                evCar4 = move.parkList[x3][y4]
-#                                                                if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
-#                                                                    heuristic += 1
-#
-#                                                        # for y4 in range(y2 - car3Length, y2):
-#                                                        #     try:
-#                                                        #         evCar4 = move.parkList[x3][y4]
-#                                                        #         if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
-#                                                        #             heuristic += 1
-#                                                        #     except IndexError:
-#                                                        #         break
-#
-#                                                        # for y4 in range(y2 + 1, y2 + car3Length + 1):
-#                                                        #     try:
-#                                                        #         evCar4 = move.parkList[x3][y4]
-#                                                        #         if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
-#                                                        #             heuristic += 1
-#                                                        #     except IndexError:
-#                                                        #         break
-#
-#                                                                                                                                    
-#                                                            except IndexError:
-#                                                                break
-#
-#                                                        for y4 in range(y2 + 1, y2 + car3Length + 1):
-#                                                            try:
-#                                                                evCar4 = move.parkList[x3][y4]
-#                                                                if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
-#                                                                    heuristic += 1
-#                                                            except IndexError:
-#                                                                break
-#
-#
-#                                                except IndexError:
-#                                                    break
-#
-#                                    # for y2 in range(exitRow-1,exitRow-cars[carNum].length-1, -1):
-#                                    #     evCar2 = move.parkList[exitx][y2]
-#                                    #     if (evCar2 != None) and (evCar2 != carNum):
-#                                    #         aboveInTheWay += 1
-#                                    #         carsInTheWay.append((evCar2, y2))
-#                                    # for y2 in range(exitRow+1,exitRow+cars[carNum].length+1):
-#                                    #     evCar2 = move.parkList[exitx][y2]
-#                                    #     if (evCar2 != None) and (evCar2 != carNum):
-#                                    #         belowInTheWay += 1
-#                                    #         carsInTheWay.append((evCar2, y2))
-#                                    # if (aboveInTheWay == True) and (belowInTheWay == True):
-#                                    #     heuristic += min(aboveInTheWay, belowInTheWay)
-#
-#                                        # # Checks wether there are cars in the way of the car in the way of the car in the way of the exit.
-#                                        # for carAndy in carsInTheWay:
-#                                        #     carInTheWay = cars[carAndy[0]]
-#                                        #     y3 = carAndy[1]
-#                                        #     if not carInTheWay.horizontal:
-#                                        #         continue
-#                                        #     else:
-#                                        #         if carInTheWay.length == 2:
-#                                        #             try:
-#                                        #                 if (move.parkList[exitx+2][y3] != None) or (move.parkList[exitx+1][y3] != None):
-#                                        #                     try:
-#                                        #                         if (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
-#                                        #                             heuristic += 1
-#                                        #                     except IndexError:
-#                                        #                         heuristic += 1
-#                                        #             except IndexError:
-#                                        #                 if (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
-#                                        #                     heuristic += 1
-#                                        #         else:
-#                                        #             try:
-#                                        #                 if (move.parkList[exitx+3][y3] != None) or (move.parkList[exitx+2][y3] != None) or (move.parkList[exitx+1][y3] != None):
-#                                        #                     try:
-#                                        #                         if (move.parkList[exitx-3][y3] != None) or (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
-#                                        #                             heuristic += 1
-#                                        #                     except IndexError:
-#                                        #                         heuristic += 1
-#                                        #             except IndexError:
-#                                        #                 if (move.parkList[exitx-3][y3] != None) or (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
-#                                        #                     heuristic += 1
-#
-#
-#
-#                                    # Checks if a car stands in the way of the car between RedCar and exit
-#                                    # if cars[carNum].length == 2:
-#                                    #     if ((move.parkList[exitx][exitRow+2] != None) or (move.parkList[exitx][exitRow+1]))\
-#                                    #      and ((move.parkList[exitx][exitRow-2] != None) or (move.parkList[exitx][exitRow-1])):
-#                                    #         heuristic += 1
-#
-#
-#                                    #     # if move.parkList[exitx][exitRow-2] != None:
-#                                    #     #     if move.parkList[exitx][exitRow+2] != None:
-#                                    #     #         heuristic += 1
-#                                    #     #         exitCarCanMove = False
-#                                    #     #     if move.parkList[exitx][exitRow+1] != None:
-#                                    #     #         heuristic += 1
-#                                    #     #         exitCarCanMove = False
-#                                    #     # if move.parkList[exitx][exitRow-1] != None:
-#                                    #     #     if move.parkList[exitx][exitRow+2] != None:
-#                                    #     #         heuristic += 1
-#                                    #     #         exitCarCanMove = False
-#                                    #     #     if move.parkList[exitx][exitRow+1] != None:
-#                                    #     #         heuristic += 1
-#                                    #     #         exitCarCanMove = False
-#                                    # else:
-#                                    #     if ((move.parkList[exitx][exitRow+3] != None) or (move.parkList[exitx][exitRow+2] != None) or (move.parkList[exitx][exitRow+1] != None)) \
-#                                    #     and ((move.parkList[exitx][exitRow-3] != None) or (move.parkList[exitx][exitRow-2] != None) or (move.parkList[exitx][exitRow-1] != None)):
-#                                    #         heuristic += 1
+
+                                    #### LEVEL 2  ####
+                                    # # Checks wether there are cars(2) in the way of the car(1) between RedCar and exit.
+                                    # # Adds a penalty for every car(2).
+                                    belowInTheWay = 0
+                                    aboveInTheWay = 0
+                                    carNumLength = cars[carNum].length
+
+
+                                    # for y2 in range(exitRow - carNumLength, exitRow + carNumLength +1):
+
+                                    #     evCar2 = move.parkList[exitx][y2]
+
+                                    #     if (evCar2 != None) and (evCar2 != carNum) and (cars[evCar2].horizontal):
+                                    #         heuristic += 1
+
+                                    #        # Checks wether there are cars(3) in the way of the car(2) in the way of the car(1) between RedCar and exit.
+                                    #        # Adds a penalty for every car(3).
+                                    #         car2Length = cars[evCar2].length
+
+                                    #         for x3 in range(exitx-car2Length, exitx):
+                                    #             try:
+                                    #                 evCar3 = move.parkList[x3][y2]
+                                    #                 if (evCar3 != None) and (evCar3 != evCar2) and (not cars[evCar3].isHorizontal()):
+                                    #                     heuristic += 1
+
+
+                                    #                     car3Length = cars[evCar3].getLength()
+
+                                    #                     for y4 in range(y2 - car3Length, y2):
+                                    #                         try:
+                                    #                             evCar4 = move.parkList[x3][y4]
+                                    #                             if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
+                                    #                                 heuristic += 1
+                                    #                         except IndexError:
+                                    #                             break
+ 
+                                    #                     for y4 in range(y2 + 1, y2 + car3Length + 1):
+                                    #                         try:
+                                    #                             evCar4 = move.parkList[x3][y4]
+                                    #                             if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
+                                    #                                 heuristic += 1
+                                    #                         except IndexError:
+                                    #                             break
+ 
+ 
+                                    #             except IndexError:
+                                    #                 break
+ 
+                                    #         for x3 in range(exitx +1, exitx + car2Length +1):
+                                    #             try:
+                                    #                 evCar3 = move.parkList[x3][y2]
+                                    #                 if (evCar3 != None) and (evCar3 != evCar2) and (not cars[evCar3].isHorizontal()):
+                                    #                     heuristic += 1
+ 
+ 
+                                    #                     car3Length = cars[evCar3].getLength()
+ 
+                                    #                     for y4 in range(y2 - car3Length, y2):
+                                    #                         try:
+                                    #                             evCar4 = move.parkList[x3][y4]
+                                    #                             if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
+                                    #                                 heuristic += 1
+ 
+                                    #                     # for y4 in range(y2 - car3Length, y2):
+                                    #                     #     try:
+                                    #                     #         evCar4 = move.parkList[x3][y4]
+                                    #                     #         if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
+                                    #                     #             heuristic += 1
+                                    #                     #     except IndexError:
+                                    #                     #         break
+ 
+                                    #                     # for y4 in range(y2 + 1, y2 + car3Length + 1):
+                                    #                     #     try:
+                                    #                     #         evCar4 = move.parkList[x3][y4]
+                                    #                     #         if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
+                                    #                     #             heuristic += 1
+                                    #                     #     except IndexError:
+                                    #                     #         break
+ 
+                                                                                                                                    
+                                    #                         except IndexError:
+                                    #                             break
+ 
+                                    #                     for y4 in range(y2 + 1, y2 + car3Length + 1):
+                                    #                         try:
+                                    #                             evCar4 = move.parkList[x3][y4]
+                                    #                             if (evCar4 != None) and (evCar4 != evCar3) and cars[evCar4].isHorizontal():
+                                    #                                 heuristic += 1
+                                    #                         except IndexError:
+                                    #                             break
+ 
+ 
+                                    #             except IndexError:
+                                    #                 break
+ 
+                                    for y2 in range(exitRow-1,exitRow-carNumLength-1, -1):
+                                        evCar2 = move.parkList[exitx][y2]
+
+                                        if (evCar2 != None) and (evCar2 not in carsInTheWay):
+                                            aboveInTheWay += 1
+                                            carsInTheWay.add(evCar2)
+
+                                    for y2 in range(exitRow+1,exitRow+carNumLength+1):
+                                        evCar2 = move.parkList[exitx][y2]
+
+                                        if (evCar2 != None) and (evCar2 not in carsInTheWay):
+                                            belowInTheWay += 1
+                                            carsInTheWay.add(evCar2)
+
+                                    
+                                    heuristic += min(aboveInTheWay, belowInTheWay)
+ 
+                                        # # Checks wether there are cars in the way of the car in the way of the car in the way of the exit.
+                                        # for carAndy in carsInTheWay:
+                                        #     carInTheWay = cars[carAndy[0]]
+                                        #     y3 = carAndy[1]
+                                        #     if not carInTheWay.horizontal:
+                                        #         continue
+                                        #     else:
+                                        #         if carInTheWay.length == 2:
+                                        #             try:
+                                        #                 if (move.parkList[exitx+2][y3] != None) or (move.parkList[exitx+1][y3] != None):
+                                        #                     try:
+                                        #                         if (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
+                                        #                             heuristic += 1
+                                        #                     except IndexError:
+                                        #                         heuristic += 1
+                                        #             except IndexError:
+                                        #                 if (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
+                                        #                     heuristic += 1
+                                        #         else:
+                                        #             try:
+                                        #                 if (move.parkList[exitx+3][y3] != None) or (move.parkList[exitx+2][y3] != None) or (move.parkList[exitx+1][y3] != None):
+                                        #                     try:
+                                        #                         if (move.parkList[exitx-3][y3] != None) or (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
+                                        #                             heuristic += 1
+                                        #                     except IndexError:
+                                        #                         heuristic += 1
+                                        #             except IndexError:
+                                        #                 if (move.parkList[exitx-3][y3] != None) or (move.parkList[exitx-2][y3] != None) or (move.parkList[exitx-1][y3] != None):
+                                        #                     heuristic += 1
+ 
+ 
+ 
+                                    # Checks if a car stands in the way of the car between RedCar and exit
+                                    # if cars[carNum].length == 2:
+                                    #     if ((move.parkList[exitx][exitRow+2] != None) or (move.parkList[exitx][exitRow+1]))\
+                                    #      and ((move.parkList[exitx][exitRow-2] != None) or (move.parkList[exitx][exitRow-1])):
+                                    #         heuristic += 1
+ 
+ 
+                                    #     # if move.parkList[exitx][exitRow-2] != None:
+                                    #     #     if move.parkList[exitx][exitRow+2] != None:
+                                    #     #         heuristic += 1
+                                    #     #         exitCarCanMove = False
+                                    #     #     if move.parkList[exitx][exitRow+1] != None:
+                                    #     #         heuristic += 1
+                                    #     #         exitCarCanMove = False
+                                    #     # if move.parkList[exitx][exitRow-1] != None:
+                                    #     #     if move.parkList[exitx][exitRow+2] != None:
+                                    #     #         heuristic += 1
+                                    #     #         exitCarCanMove = False
+                                    #     #     if move.parkList[exitx][exitRow+1] != None:
+                                    #     #         heuristic += 1
+                                    #     #         exitCarCanMove = False
+                                     # else:
+                                    #     if ((move.parkList[exitx][exitRow+3] != None) or (move.parkList[exitx][exitRow+2] != None) or (move.parkList[exitx][exitRow+1] != None)) \
+                                    #     and ((move.parkList[exitx][exitRow-3] != None) or (move.parkList[exitx][exitRow-2] != None) or (move.parkList[exitx][exitRow-1] != None)):
+                                    #         heuristic += 1
 
                                 exitx -=1
 
@@ -781,8 +792,7 @@ def aStarSimulation(parking):
                             # 
                             # for ycheck in xrange(exitRow-1, exitRow-4, -1):
                             #     if (move.parkList[8][ycheck] != None) and (move.parkList[8][ycheck] != 24):
-                            #         heuristic += 3
-                            #         break
+                            #         heuristic += 1
                         
 
                             heapq.heappush(h,(heuristic, move))
@@ -1477,8 +1487,7 @@ if __name__ == '__main__':
     # getpostime = 0
 
     starttot = time.time()
-    saveResults(board_5, "board_5")
-#    boards = board_5(algorithm=aStarSimulation)
+    boards = board_6(algorithm=aStarSimulation)
     stoptot = time.time()
 
     print "total time: ", stoptot-starttot
