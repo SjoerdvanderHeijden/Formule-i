@@ -6,7 +6,7 @@ import math, copy, Queue, time, heapq
 # from pycallgraph import PyCallGraph
 # from pycallgraph.output import GraphvizOutput
 
-version = "v+1+1+1"
+version = "v+1+1"
 
 
 class Car(object):
@@ -569,7 +569,7 @@ def aStarSimulation(parking):
     exitColumn = exit[0]
 
     h = []
-    heapq.heappush(h, (1, parking))
+    heapq.heappush(h, (0, parking))
 
     visitedParkings = set()
 
@@ -596,15 +596,15 @@ def aStarSimulation(parking):
                                 search = False
                                 break
                         
-                            heuristic = move.numMoves
+                            heuristic = move.numMoves +1
 
                             carsInTheWay = set()
                             exitSearch = True
-                            exitx = exitColumn-1
+                            exitx = exitColumn
 
                             while exitSearch:
                                 carNum = move.parkList[exitx][exitRow]
-                                carsInTheWay.add(carNum)
+                                
 
                                 if carNum == 1:
                                     exitSearch = False
@@ -619,6 +619,7 @@ def aStarSimulation(parking):
                                     #### LEVEL 2  ####
                                     # # Checks wether there are cars(2) in the way of the car(1) between RedCar and exit.
                                     # # Adds a penalty for every car(2).
+                                    carsInTheWay.add(carNum)
                                     belowInTheWay = 0
                                     aboveInTheWay = 0
                                     carNumLength = cars[carNum].length
@@ -710,6 +711,7 @@ def aStarSimulation(parking):
  
                                     #             except IndexError:
                                     #                 break
+
  
                                     for y2 in range(exitRow-1,exitRow-carNumLength-1, -1):
                                         evCar2 = move.parkList[exitx][y2]
@@ -785,9 +787,9 @@ def aStarSimulation(parking):
                                     #     if ((move.parkList[exitx][exitRow+3] != None) or (move.parkList[exitx][exitRow+2] != None) or (move.parkList[exitx][exitRow+1] != None)) \
                                     #     and ((move.parkList[exitx][exitRow-3] != None) or (move.parkList[exitx][exitRow-2] != None) or (move.parkList[exitx][exitRow-1] != None)):
                                     #         heuristic += 1
-
+                                
                                 exitx -=1
-
+                            
                             # Voor bord 5: geeft penalty als de vrachtwagen rechtsonder de weg verspert (en vaststaat)
                             # 
                             # for ycheck in xrange(exitRow-1, exitRow-4, -1):
@@ -1487,7 +1489,7 @@ if __name__ == '__main__':
     # getpostime = 0
 
     starttot = time.time()
-    boards = board_1(algorithm=aStarSimulation)
+    boards = board_4(algorithm=aStarSimulation)
     stoptot = time.time()
 
     print "total time: ", stoptot-starttot
@@ -1499,5 +1501,3 @@ if __name__ == '__main__':
 
     # with PyCallGraph(output=GraphvizOutput()):
     #     board_3()
-
-
